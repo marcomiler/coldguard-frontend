@@ -1,13 +1,12 @@
-// Presupuesto de peso: falla el build si dist/ lo excede. Valores en kB gzip.
-// Ver docs/quality/performance-budget.md. Para subir un límite hay que justificarlo en ese documento.
+// Budgets in gzip kB.
 import { readdirSync, readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
 const BUDGET_KB = {
-  initialJs: 115, // JS que carga index.html (entrada + modulepreload)
+  initialJs: 115,
   initialCss: 8,
-  lazyChunk: 30, // cualquier chunk cargado bajo demanda
+  lazyChunk: 30,
 }
 
 const dist = 'dist'
@@ -34,7 +33,6 @@ for (const name of readdirSync(assets).filter((f) => /\.(js|css)$/.test(f))) {
     failures.push(`chunk ${name}: ${kb.toFixed(1)} kB > ${BUDGET_KB.lazyChunk} kB`)
   }
 
-  // Los mocks (MSW) son solo de desarrollo: nunca pueden llegar a producción.
   if (
     name.endsWith('.js') &&
     /setupWorker|mockServiceWorker/.test(readFileSync(join(assets, name), 'utf8'))

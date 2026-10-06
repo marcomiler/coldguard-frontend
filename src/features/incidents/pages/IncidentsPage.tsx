@@ -35,7 +35,7 @@ export function IncidentsPage() {
   const roles = useSession((state) => state.session?.roles ?? [])
   const [status, setStatus] = useState<IncidentStatus | ''>('')
   const [page, setPage] = useState(0)
-  // Ventana fija al montar: evita cambiar la query key en cada render.
+  // Fixed at mount so the query key stays stable.
   const [range] = useState(() => {
     const now = Date.now()
     return { from: new Date(now - DAY_MS).toISOString(), to: new Date(now).toISOString() }
@@ -47,7 +47,7 @@ export function IncidentsPage() {
 
   return (
     <section aria-labelledby="incidents-title" className="flex flex-col gap-6">
-      <h1 id="incidents-title" className="text-2xl font-semibold">
+      <h1 id="incidents-title" className="text-heading-1 font-semibold">
         Incidentes
       </h1>
 
@@ -59,7 +59,7 @@ export function IncidentsPage() {
 
       {canAccess(roles, 'metrics') && (
         <section aria-labelledby="priority-title">
-          <h2 id="priority-title" className="mb-2 text-lg font-medium">
+          <h2 id="priority-title" className="mb-2 text-heading-2 font-medium">
             Por prioridad (últimas 24 h)
           </h2>
           {metrics.isPending && <LoadingState label="Cargando métricas…" />}
@@ -70,18 +70,15 @@ export function IncidentsPage() {
             <>
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {PRIORITIES.map((priority) => (
-                  <li
-                    key={priority}
-                    className="rounded-lg border border-slate-200 p-3 dark:border-slate-700"
-                  >
+                  <li key={priority} className="rounded-lg border border-border p-3">
                     <Badge tone={PRIORITY_TONE[priority]}>{priority}</Badge>
-                    <p className="mt-1 text-2xl font-semibold">
+                    <p className="mt-1 text-metric font-semibold tabular-nums">
                       {metrics.data.countByPriority[priority] ?? 0}
                     </p>
                   </li>
                 ))}
               </ul>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              <p className="mt-2 text-small text-fg-muted">
                 Tiempo medio de reconocimiento: {formatDuration(metrics.data.mttaSeconds)} · de
                 resolución: {formatDuration(metrics.data.mttrSeconds)}
               </p>
@@ -92,10 +89,10 @@ export function IncidentsPage() {
 
       <section aria-labelledby="list-title" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 id="list-title" className="text-lg font-medium">
+          <h2 id="list-title" className="text-heading-2 font-medium">
             Listado
           </h2>
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2 text-small">
             Estado
             <select
               value={status}
@@ -103,7 +100,7 @@ export function IncidentsPage() {
                 setStatus(event.target.value as IncidentStatus | '')
                 setPage(0)
               }}
-              className="min-h-10 rounded-md border border-slate-300 bg-white px-2 dark:border-slate-600 dark:bg-slate-900"
+              className="min-h-10 rounded-md border border-border-strong bg-surface px-2"
             >
               <option value="">Todos</option>
               {(Object.keys(STATUS_LABEL) as IncidentStatus[]).map((s) => (
@@ -135,7 +132,7 @@ export function IncidentsPage() {
               >
                 Anterior
               </Button>
-              <span className="text-sm" aria-live="polite">
+              <span className="text-small" aria-live="polite">
                 Página {incidents.data.page.page + 1} de{' '}
                 {Math.max(incidents.data.page.totalPages, 1)}
               </span>
@@ -157,9 +154,9 @@ export function IncidentsPage() {
 function IncidentTable({ items, busy }: { items: Incident[]; busy: boolean }) {
   return (
     <div className="overflow-x-auto" aria-busy={busy}>
-      <table className="w-full text-left text-sm">
+      <table className="w-full text-left text-small">
         <caption className="sr-only">Incidentes de la cadena de frío</caption>
-        <thead className="border-b border-slate-300 dark:border-slate-600">
+        <thead className="border-b border-border-strong">
           <tr>
             <th scope="col" className="py-2 pr-4 font-medium">
               Prioridad
@@ -180,7 +177,7 @@ function IncidentTable({ items, busy }: { items: Incident[]; busy: boolean }) {
         </thead>
         <tbody>
           {items.map((incident) => (
-            <tr key={incident.id} className="border-b border-slate-200 dark:border-slate-700">
+            <tr key={incident.id} className="border-b border-border">
               <td className="py-2 pr-4">
                 <Badge tone={PRIORITY_TONE[incident.priority]}>{incident.priority}</Badge>
               </td>

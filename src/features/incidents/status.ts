@@ -1,6 +1,5 @@
 /**
- * El backend de incidentes (SPEC-007) aún es `planned` en openapi.yaml. Mientras sea false, la
- * pantalla se construye contra mocks de desarrollo (src/mocks) y avisa al usuario.
- * Cuando el contrato marque `implemented`: poner true y borrar los handlers de incidentes y métricas.
+ * Incidents are still `planned` in openapi.yaml, so the screen runs on dev mocks. Once the
+ * contract marks them `implemented`, set this to true and delete the incident/metrics mock handlers.
  */
 export const INCIDENTS_BACKEND_READY = false

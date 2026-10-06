@@ -3,7 +3,7 @@ import { createApiClient, unwrap } from './client'
 import { ApiError } from './errors'
 import { shouldRetryQuery } from './retry'
 
-// fetch que nunca responde: solo termina cuando la señal aborta (como el fetch real).
+// Never responds; settles only when the signal aborts, like a real fetch.
 const hangingFetch: typeof fetch = (input) =>
   new Promise((_, reject) => {
     const signal = (input as Request).signal

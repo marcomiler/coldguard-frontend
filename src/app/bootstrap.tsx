@@ -27,10 +27,9 @@ configureAuthBridge({
 })
 
 async function enableMocks() {
-  // import.meta.env.DEV debe evaluarse aquí: así Vite elimina el import dinámico en producción.
+  // Evaluated here so Vite drops the dynamic MSW import from production builds.
   if (!import.meta.env.DEV || !env.mocksEnabled) return
   const { worker } = await import('@/mocks/browser')
-  // Solo se interceptan las operaciones planned; lo implementado va al Gateway real.
   await worker.start({ onUnhandledFrame: 'bypass', quiet: true })
 }
 

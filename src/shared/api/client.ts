@@ -3,10 +3,7 @@ import { env } from '@/shared/config/env'
 import { ApiError, isApiError } from './errors'
 import type { paths } from './schema'
 
-/**
- * La sesión vive en features/auth; shared no la importa. app/ inyecta aquí cómo obtener el token
- * y qué hacer ante un 401 (volver al login: no hay refresh).
- */
+/** Injected by app/ so shared/ never imports from features/auth. */
 interface AuthBridge {
   getToken: () => string | null
   onUnauthorized: () => void
@@ -18,16 +15,12 @@ export function configureAuthBridge(next: AuthBridge) {
   bridge = next
 }
 
-/**
- * Plazos por petición. Deben superar el deadline del Gateway hacia cada servicio (5 s, variables
- * `*_SERVICE_DEADLINE` del backend) para que normalmente llegue primero su 504 `UPSTREAM_TIMEOUT`
- * con `correlationId`, y el plazo del cliente sea solo la red de seguridad.
- */
+/** Must exceed the Gateway's 5 s per-service deadline so its 504 (with correlationId) arrives first. */
 export const TIMEOUTS_MS = { read: 10_000, write: 20_000 }
 
 const isRead = (method: string) => method === 'GET' || method === 'HEAD'
 
-// Por `name`, no por instanceof: robusto entre contextos (iframes, jsdom).
+// By name, not instanceof: DOMException differs across realms (iframes, jsdom).
 const hasName = (error: unknown, name: string) =>
   (error as { name?: unknown } | null)?.name === name
 
@@ -42,7 +35,7 @@ export function createApiClient({ fetch, timeoutsMs = TIMEOUTS_MS }: ClientOptio
       const token = bridge.getToken()
       if (token) request.headers.set('Authorization', `Bearer ${token}`)
       request.headers.set('X-Correlation-Id', crypto.randomUUID())
-      // Se combina con la señal del llamador: TanStack Query cancela por la suya y sigue funcionando.
+      // Combined with the caller's signal so TanStack Query cancellation keeps working.
       const limit = AbortSignal.timeout(isRead(request.method) ? timeoutsMs.read : timeoutsMs.write)
       return new Request(request, { signal: AbortSignal.any([request.signal, limit]) })
     },
@@ -69,13 +62,11 @@ interface Result<T> {
   response: Response
 }
 
-/** Convierte el resultado de openapi-fetch en datos o en un ApiError tipado. */
 export async function unwrap<T>(request: Promise<Result<T>>): Promise<T> {
   let result: Result<T>
   try {
     result = await request
   } catch (cause) {
-    // Timeout (ya tipado por el middleware) y cancelación del llamador no son «sin conexión».
     if (isApiError(cause)) throw cause
     if (hasName(cause, 'AbortError')) throw cause
     throw ApiError.network()

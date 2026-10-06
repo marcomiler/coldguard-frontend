@@ -19,7 +19,7 @@ export function AssetsPage() {
 
   return (
     <section aria-labelledby="assets-title" className="flex flex-col gap-4">
-      <h1 id="assets-title" className="text-2xl font-semibold">
+      <h1 id="assets-title" className="text-heading-1 font-semibold">
         Activos
       </h1>
 
@@ -33,9 +33,9 @@ export function AssetsPage() {
       {data && data.items.length > 0 && (
         <>
           <div className="overflow-x-auto" aria-busy={isFetching}>
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-small">
               <caption className="sr-only">Unidades de frío registradas</caption>
-              <thead className="border-b border-slate-300 dark:border-slate-600">
+              <thead className="border-b border-border-strong">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     Nombre
@@ -53,7 +53,7 @@ export function AssetsPage() {
               </thead>
               <tbody>
                 {data.items.map((asset) => (
-                  <tr key={asset.id} className="border-b border-slate-200 dark:border-slate-700">
+                  <tr key={asset.id} className="border-b border-border">
                     <th scope="row" className="py-2 pr-4 font-medium">
                       {asset.name}
                     </th>
@@ -73,7 +73,7 @@ export function AssetsPage() {
             <Button variant="secondary" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
               Anterior
             </Button>
-            <span className="text-sm" aria-live="polite">
+            <span className="text-small" aria-live="polite">
               Página {data.page.page + 1} de {Math.max(data.page.totalPages, 1)}
             </span>
             <Button

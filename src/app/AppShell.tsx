@@ -19,13 +19,13 @@ export function AppShell() {
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-10 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-slate-900"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-10 focus:rounded-sm focus:bg-surface focus:px-3 focus:py-2 focus:text-fg"
       >
         Saltar al contenido
       </a>
-      <header className="border-b border-slate-200 dark:border-slate-700">
+      <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-          <span className="text-lg font-semibold">ColdGuard</span>
+          <span className="text-heading-2 font-semibold">ColdGuard</span>
           <nav aria-label="Principal" className="flex flex-1 flex-wrap gap-1">
             {NAV.filter((item) => canAccess(session.roles, item.area)).map((item) => (
               <NavLink
@@ -33,10 +33,10 @@ export function AppShell() {
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    'rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-sky-600',
+                    'rounded-md px-3 py-2 text-small font-medium',
                     isActive
-                      ? 'bg-sky-100 text-sky-900 dark:bg-sky-900 dark:text-sky-100'
-                      : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800',
+                      ? 'bg-accent-subtle text-accent-subtle-fg'
+                      : 'text-fg-muted hover:bg-surface-hover',
                   )
                 }
               >
@@ -51,14 +51,14 @@ export function AppShell() {
             <DropdownMenu.Portal>
               <DropdownMenu.Content
                 align="end"
-                className="min-w-56 rounded-md border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-800"
+                className="min-w-56 rounded-md border border-border bg-surface-raised p-1 shadow-overlay"
               >
-                <DropdownMenu.Label className="px-3 py-2 text-xs text-slate-600 dark:text-slate-300">
+                <DropdownMenu.Label className="px-3 py-2 text-caption text-fg-muted">
                   {session.roles.map((role) => ROLE_LABELS[role]).join(', ')}
                 </DropdownMenu.Label>
                 <DropdownMenu.Item
                   onSelect={signOut}
-                  className="cursor-pointer rounded px-3 py-2 text-sm outline-none data-[highlighted]:bg-slate-100 dark:data-[highlighted]:bg-slate-700"
+                  className="cursor-pointer rounded-sm px-3 py-2 text-small outline-none data-[highlighted]:bg-surface-hover"
                 >
                   Salir
                 </DropdownMenu.Item>

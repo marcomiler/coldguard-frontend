@@ -7,7 +7,6 @@ import { ErrorState, Notice } from '@/shared/ui/states'
 import { useLogin } from '../api/login'
 import { useSession } from '../session'
 
-// Formulario mínimo sin librerías: mantiene liviano el bundle inicial (ver performance-budget.md).
 type Errors = { username?: string; password?: string }
 
 export function LoginPage() {
@@ -37,7 +36,7 @@ export function LoginPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 px-4 py-8">
-      <h1 className="text-2xl font-semibold">Ingresar a ColdGuard</h1>
+      <h1 className="text-heading-1 font-semibold">Ingresar a ColdGuard</h1>
       {ended && <Notice>Tu sesión terminó. Vuelve a ingresar para continuar.</Notice>}
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-4">
         <Field label="Usuario" name="username" autoComplete="username" error={errors.username} />

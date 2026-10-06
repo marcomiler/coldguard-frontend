@@ -1,7 +1,5 @@
 # Alcance del frontend
 
-> Migrado desde `docs/frontend-scope.md` (contenido original preservado sin cambios). Ver [migration-report.md](../migration-report.md).
-
 ## Módulos iniciales
 - Autenticación.
 - Dashboard principal.

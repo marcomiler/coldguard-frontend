@@ -1,5 +1,3 @@
-// Genera src/shared/api/schema.d.ts desde el contrato OpenAPI del backend.
-// Uso: pnpm api:types   (o OPENAPI_PATH=/ruta/openapi.yaml pnpm api:types)
 import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'

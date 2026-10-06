@@ -3,9 +3,8 @@ import { isApiError } from './errors'
 const RETRYABLE = new Set(['NETWORK_ERROR', 'UPSTREAM_UNAVAILABLE', 'UPSTREAM_ERROR'])
 
 /**
- * Reintento de lecturas (TanStack Query): una sola vez y solo ante fallos transitorios.
- * Nunca ante timeouts (reintentar apila carga sobre un servicio lento y retrasa el aviso al
- * usuario) ni ante 4xx. Las escrituras no se reintentan automáticamente: pueden no ser idempotentes.
+ * Retry reads once, only on transient failures. Never on timeouts (retrying piles load on a slow
+ * service and delays feedback) or 4xx. Writes are never retried: they may not be idempotent.
  */
 export const shouldRetryQuery = (failureCount: number, error: unknown): boolean =>
   failureCount < 1 && isApiError(error) && RETRYABLE.has(error.code)

@@ -1,13 +1,3 @@
 @import 'tailwindcss';
-
-:root {
-  color-scheme: light dark;
-}
-
-body {
-  @apply bg-white text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100;
-}
-
-#main:focus {
-  outline: none;
-}
+@import './styles/tokens.css';
+@import './styles/base.css';

@@ -2,7 +2,6 @@ import { createBrowserRouter } from 'react-router'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
 import { HomeRedirect, RequireArea, RequireAuth } from './guards'
 
-// Las pantallas de cada área se cargan bajo demanda para mantener pequeño el bundle inicial.
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   {

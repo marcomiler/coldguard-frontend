@@ -4,5 +4,5 @@
 
 ## TODO
 - [ ] Mapear cada entregable de este repositorio con los criterios de evaluación de APF1.
-- [ ] Vincular evidencias (wireframes, decisiones de diseño, arquitectura) con los puntos del rúbrica académica.
+- [ ] Vincular evidencias (artefactos de diseño, sistema de diseño, decisiones, arquitectura) con los puntos del rúbrica académica.
 - [ ] Mantener este contenido enfocado en el informe académico, no en la implementación (la implementación vive en `/architecture`, `/ux`, `/quality`).

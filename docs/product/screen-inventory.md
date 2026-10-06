@@ -1,6 +1,6 @@
 # Inventario de pantallas
 
-Basado en las pantallas identificadas en [wireframes.md](../ux/wireframes.md) (migrado de `docs/wireframes.md`).
+Basado en las pantallas iniciales identificadas (ver [design-assets.md](../ux/design-assets.md)) y en la [arquitectura de información](../ux/information-architecture.md).
 
 ## Pantallas
 

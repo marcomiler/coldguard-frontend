@@ -22,7 +22,6 @@ export function RequireArea({ area }: { area: Area }) {
   return <Outlet />
 }
 
-/** `/` lleva a la primera pantalla útil del rol. */
 export function HomeRedirect() {
   const session = useSession((state) => state.session)
   const home = session ? homePathFor(session.roles) : null

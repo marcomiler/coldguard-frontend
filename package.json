@@ -11,7 +11,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build && rm -f dist/mockServiceWorker.js && node scripts/check-bundle-size.mjs",
     "preview": "vite preview",
-    "lint": "eslint .",
+    "lint": "eslint . && node scripts/check-design-rules.mjs",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

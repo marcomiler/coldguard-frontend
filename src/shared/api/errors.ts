@@ -7,7 +7,6 @@ export interface FieldError {
   message: string
 }
 
-/** Error de la API (Problem Details, RFC 9457). Decidir siempre por `code`, nunca por `detail`. */
 export class ApiError extends Error {
   readonly status: number
   readonly code: string
@@ -48,7 +47,7 @@ export class ApiError extends Error {
     return new ApiError({ status: 0, code: 'NETWORK_ERROR' })
   }
 
-  /** El cliente agotó su plazo. Una escritura con timeout puede haberse aplicado igualmente. */
+  /** A timed-out write may still have been applied. */
   static timeout(write: boolean): ApiError {
     return new ApiError({ status: 0, code: write ? 'WRITE_TIMEOUT' : 'REQUEST_TIMEOUT' })
   }
@@ -56,7 +55,6 @@ export class ApiError extends Error {
 
 export const isApiError = (error: unknown): error is ApiError => error instanceof ApiError
 
-// Mensajes propios por `code`. Las reglas de negocio las decide el backend; aquí solo se explican.
 const MESSAGES: Record<string, string> = {
   NETWORK_ERROR: 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.',
   REQUEST_TIMEOUT: 'El servidor tardó demasiado en responder. Inténtalo de nuevo.',

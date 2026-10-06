@@ -36,7 +36,7 @@ export function parseSession(token: string): Session | null {
 
 interface SessionState {
   session: Session | null
-  /** true cuando la sesión terminó sola (token vencido o 401), no por «Salir». */
+  /** True when the session ended by itself (expired token or 401), not via sign out. */
   ended: boolean
   signIn: (token: string, expiresInSeconds: number) => boolean
   signOut: () => void
@@ -45,10 +45,7 @@ interface SessionState {
 
 let expiryTimer: ReturnType<typeof setTimeout> | undefined
 
-/**
- * El token vive solo en memoria (decisión del backend: sin cookies ni refresh). Recargar la página
- * cierra la sesión; al vencer el token (1 h) se vuelve al login.
- */
+/** The token lives in memory only (no cookies, no refresh): a reload signs the user out. */
 export const useSession = create<SessionState>((set, get) => ({
   session: null,
   ended: false,

@@ -30,11 +30,16 @@ Nota: TypeScript está fijado en 5.9 porque `openapi-typescript` aún no es comp
 src/
   app/        bootstrap, router, guards por rol, AppShell
   features/   auth/  assets/  incidents/   (cada una: api/, pages/, componentes propios)
-  shared/     api/ (cliente, errores, schema.d.ts generado), ui/, lib/, config/
+  shared/     api/ (cliente, errores, schema.d.ts generado), ui/ (primitivos), patterns/ (cuando haya repetición), lib/, config/
+  styles/     tokens.css (único lugar de valores visuales), base.css (estilos globales)
   mocks/      handlers MSW, solo de operaciones `planned` (solo en desarrollo)
 ```
 
 Reglas de dependencia: `app → features → shared`. Una feature no importa de otra feature (la excepción actual es `auth/session`, que es transversal). `shared` no importa de `features`: la sesión se inyecta con `configureAuthBridge`. Los componentes no llaman a `fetch`; usan hooks de `features/*/api`.
+
+## Estilos
+
+Tailwind v4 CSS-first en cuatro capas (primitivos → tokens semánticos → base → componentes con utilidades), sin CSS de componentes y con el tema claro/oscuro resuelto en los tokens. Reglas y contrato de tokens en [design-system.md](../ux/design-system.md); se verifican en `pnpm lint` (`scripts/check-design-rules.mjs`). Niveles de componentes en [component-structure.md](component-structure.md).
 
 Relacionado: [routing.md](routing.md), [state-management.md](state-management.md), [api-contract-consumption.md](api-contract-consumption.md), [component-structure.md](component-structure.md).
 

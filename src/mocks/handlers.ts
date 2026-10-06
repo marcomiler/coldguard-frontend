@@ -1,6 +1,5 @@
-// Mocks SOLO de operaciones `x-status: planned` en contracts/rest/openapi.yaml (coldguard-platform).
-// Lo implementado nunca se mockea: va al Gateway real. Al pasar una operación a `implemented`,
-// se borra su handler de aquí.
+// Mocks only for operations marked x-status: planned in the contract; delete a handler once
+// its operation is implemented.
 import { http, HttpResponse } from 'msw'
 import type { components } from '@/shared/api/schema'
 import { env } from '@/shared/config/env'

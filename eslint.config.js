@@ -14,7 +14,6 @@ export default tseslint.config(
     files: ['**/*.{ts,tsx}'],
     languageOptions: { globals: globals.browser },
     rules: {
-      // Las llamadas HTTP viven solo en shared/api y en features/*/api.
       'no-restricted-globals': [
         'error',
         { name: 'fetch', message: 'Usa los servicios tipados de features/*/api.' },

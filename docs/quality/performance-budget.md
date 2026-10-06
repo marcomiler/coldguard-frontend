@@ -20,7 +20,9 @@ Los límites viven en `scripts/check-bundle-size.mjs` y se verifican en cada `pn
 3. **Sin `tailwind-merge`.** `cn` es `clsx`: los componentes base no pisan clases entre sí, y un `className` externo solo añade.
 4. **Antes de agregar una dependencia**, medir su efecto con `pnpm build`. Preferir la API de la plataforma (`fetch`, `AbortSignal`, `Intl`, `FormData`) a una librería.
 5. **Mocks fuera de producción.** `import.meta.env.DEV` se evalúa en `bootstrap.tsx` para que Vite elimine el import dinámico de MSW; el script de presupuesto verifica que no quede rastro.
-6. **Íconos e imágenes:** SVG inline puntual o archivos estáticos; no librerías de íconos completas.
+6. **Íconos e imágenes:** SVG inline puntual en componentes propios; ni librerías de íconos ni imágenes decorativas.
+7. **Fuentes:** pila del sistema por defecto (0 kB). Una webfont solo si es una familia variable `woff2`, subconjunto latino, autoalojada, `font-display: swap` y ≤ 30 kB. Cuenta contra la carga inicial y debe justificarse en [design-decisions.md](../ux/design-decisions.md).
+8. **CSS:** el diseño no puede superar 8 kB gzip iniciales; las reglas de [design-system.md](../ux/design-system.md) §9 (sin efectos costosos ni librerías de animación) existen para eso.
 
 ## Historial
 
