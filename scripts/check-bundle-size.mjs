@@ -1,0 +1,60 @@
+// Presupuesto de peso: falla el build si dist/ lo excede. Valores en kB gzip.
+// Ver docs/quality/performance-budget.md. Para subir un límite hay que justificarlo en ese documento.
+import { readdirSync, readFileSync, existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { gzipSync } from 'node:zlib'
+
+const BUDGET_KB = {
+  initialJs: 115, // JS que carga index.html (entrada + modulepreload)
+  initialCss: 8,
+  lazyChunk: 30, // cualquier chunk cargado bajo demanda
+}
+
+const dist = 'dist'
+const assets = join(dist, 'assets')
+const gzipKb = (file) => gzipSync(readFileSync(file)).length / 1024
+
+const html = readFileSync(join(dist, 'index.html'), 'utf8')
+const initial = new Set(
+  [...html.matchAll(/(?:src|href)="\/(assets\/[^"]+\.(?:js|css))"/g)].map((m) => m[1]),
+)
+
+const failures = []
+let initialJs = 0
+let initialCss = 0
+const report = []
+
+for (const name of readdirSync(assets).filter((f) => /\.(js|css)$/.test(f))) {
+  const kb = gzipKb(join(assets, name))
+  const isInitial = initial.has(`assets/${name}`)
+  report.push(`${isInitial ? 'inicial' : 'lazy   '} ${kb.toFixed(1).padStart(6)} kB  ${name}`)
+  if (isInitial && name.endsWith('.js')) initialJs += kb
+  else if (isInitial) initialCss += kb
+  else if (name.endsWith('.js') && kb > BUDGET_KB.lazyChunk) {
+    failures.push(`chunk ${name}: ${kb.toFixed(1)} kB > ${BUDGET_KB.lazyChunk} kB`)
+  }
+
+  // Los mocks (MSW) son solo de desarrollo: nunca pueden llegar a producción.
+  if (
+    name.endsWith('.js') &&
+    /setupWorker|mockServiceWorker/.test(readFileSync(join(assets, name), 'utf8'))
+  ) {
+    failures.push(`${name} contiene código de mocks (MSW)`)
+  }
+}
+if (existsSync(join(dist, 'mockServiceWorker.js')))
+  failures.push('dist/mockServiceWorker.js no debe publicarse')
+
+if (initialJs > BUDGET_KB.initialJs)
+  failures.push(`JS inicial: ${initialJs.toFixed(1)} kB > ${BUDGET_KB.initialJs} kB`)
+if (initialCss > BUDGET_KB.initialCss)
+  failures.push(`CSS inicial: ${initialCss.toFixed(1)} kB > ${BUDGET_KB.initialCss} kB`)
+
+console.log(report.sort().join('\n'))
+console.log(
+  `\nInicial: JS ${initialJs.toFixed(1)}/${BUDGET_KB.initialJs} kB, CSS ${initialCss.toFixed(1)}/${BUDGET_KB.initialCss} kB (gzip)`,
+)
+if (failures.length) {
+  console.error(`\nPresupuesto excedido:\n- ${failures.join('\n- ')}`)
+  process.exit(1)
+}

@@ -19,23 +19,23 @@ Ver el detalle de la reorganización y limpieza en [migration-report.md](migrati
 - 🚧 [user-flows.md](ux/user-flows.md) — TODO.
 - ✅ [wireframes.md](ux/wireframes.md) — pantallas iniciales identificadas (migrado de `docs/wireframes.md`).
 - 🚧 [mockups.md](ux/mockups.md) — TODO.
-- 🚧 [design-decisions.md](ux/design-decisions.md) — TODO (destino de `docs/ux-decisions.md`, que estaba vacío).
+- ✅ [design-decisions.md](ux/design-decisions.md) — decisiones vigentes (destino de `docs/ux-decisions.md`).
 - 🚧 [accessibility-notes.md](ux/accessibility-notes.md) — TODO.
 - 🚧 [wpo-strategy.md](ux/wpo-strategy.md) — TODO (destino de `docs/wpo.md`, que estaba vacío).
 - 🚧 [figma-links.md](ux/figma-links.md) — TODO (sin enlaces reales aún, no inventar).
 
 ## /architecture — Cómo está construido el frontend
-- 🚧 [frontend-architecture.md](architecture/frontend-architecture.md) — TODO.
-- 🚧 [routing.md](architecture/routing.md) — TODO.
-- 🚧 [state-management.md](architecture/state-management.md) — TODO.
-- 🚧 [api-contract-consumption.md](architecture/api-contract-consumption.md) — TODO.
+- ✅ [frontend-architecture.md](architecture/frontend-architecture.md) — definido (v0.1).
+- ✅ [routing.md](architecture/routing.md) — definido (v0.1).
+- ✅ [state-management.md](architecture/state-management.md) — definido (v0.1).
+- ✅ [api-contract-consumption.md](architecture/api-contract-consumption.md) — definido (v0.1).
 - 🚧 [component-structure.md](architecture/component-structure.md) — TODO.
 
 ## /quality — Cómo verificamos que funciona
 - 🚧 [acceptance-criteria.md](quality/acceptance-criteria.md) — TODO.
 - 🚧 [ui-test-strategy.md](quality/ui-test-strategy.md) — TODO.
 - 🚧 [usability-checklist.md](quality/usability-checklist.md) — TODO.
-- 🚧 [performance-budget.md](quality/performance-budget.md) — TODO.
+- ✅ [performance-budget.md](quality/performance-budget.md) — presupuesto y control en el build.
 
 ## /research — Fuentes y referencias
 - 🚧 [references.md](research/references.md) — TODO.

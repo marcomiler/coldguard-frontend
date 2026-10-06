@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# El gitignore global ignora estos; aquí sí se versionan (CI usa --frozen-lockfile)
+!pnpm-lock.yaml
+!.env.example
