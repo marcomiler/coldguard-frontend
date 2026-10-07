@@ -24,9 +24,9 @@ pnpm api:types           # regenera src/shared/api/schema.d.ts desde el contrato
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
 ```
 
-## Backend real y mocks
+## Backend real
 
-Lo `implemented` en el contrato va al backend real; lo `planned` se mockea con MSW solo en desarrollo (hoy: listado de incidentes y métricas; el resto de lo planificado se agrega al construir su pantalla). `VITE_MOCKS=off` los desactiva. Detalle en [docs/architecture/api-contract-consumption.md](docs/architecture/api-contract-consumption.md).
+Todo va al Gateway real: no hay datos simulados ni mocks. Las áreas cuyo backend sigue `planned` en el contrato se ocultan (`ready: false` en `src/shared/lib/roles.ts`) hasta que pasen a `implemented`. Detalle en [docs/architecture/api-contract-consumption.md](docs/architecture/api-contract-consumption.md).
 
 Usuarios demo (los crea `seed-demo.sh` del backend): `admin`, `supervisor`, `operator`, `technician`, `auditor`.
 

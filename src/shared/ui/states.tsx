@@ -7,7 +7,7 @@ export function LoadingState({ label = 'Cargando…' }: { label?: string }) {
     <div role="status" className="flex items-center gap-3 p-6 text-fg-muted">
       <span
         aria-hidden="true"
-        className="size-5 animate-spin rounded-full border-2 border-border-strong border-t-accent motion-reduce:animate-none"
+        className="size-4 animate-spin rounded-full border-2 border-border-strong border-t-accent motion-reduce:animate-none"
       />
       {label}
     </div>
@@ -16,8 +16,8 @@ export function LoadingState({ label = 'Cargando…' }: { label?: string }) {
 
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="rounded-lg border border-dashed border-border-strong p-8 text-center">
-      <p className="font-medium">{title}</p>
+    <div className="rounded-md border border-dashed border-border-strong p-8 text-center">
+      <p className="text-heading-3 font-semibold">{title}</p>
       {children && <p className="mt-1 text-small text-fg-muted">{children}</p>}
     </div>
   )
@@ -28,16 +28,18 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
   return (
     <div
       role="alert"
-      className="rounded-lg border border-danger bg-danger-subtle p-4 text-danger-fg"
+      className="flex flex-wrap items-center gap-3 rounded-md border border-danger bg-danger-subtle px-3 py-2.5 text-danger-fg"
     >
-      <p className="font-medium">{errorMessage(error)}</p>
-      {correlationId && (
-        <p className="mt-1 text-caption">
-          Código de seguimiento: <code>{correlationId}</code>
-        </p>
-      )}
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold">{errorMessage(error)}</p>
+        {correlationId && (
+          <p className="mt-0.5 text-caption">
+            Código de seguimiento: <code className="font-mono text-code">{correlationId}</code>
+          </p>
+        )}
+      </div>
       {onRetry && (
-        <Button variant="secondary" className="mt-3" onClick={onRetry}>
+        <Button variant="secondary" size="sm" onClick={onRetry}>
           Reintentar
         </Button>
       )}

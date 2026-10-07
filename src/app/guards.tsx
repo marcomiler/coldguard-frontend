@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router'
 import { useSession } from '@/features/auth/session'
-import { canAccess, homePathFor, type Area } from '@/shared/lib/roles'
+import { canAccess, homePathFor, isAreaReady, type Area } from '@/shared/lib/roles'
 import { EmptyState } from '@/shared/ui/states'
 
 export function RequireAuth() {
@@ -12,6 +12,13 @@ export function RequireAuth() {
 
 export function RequireArea({ area }: { area: Area }) {
   const session = useSession((state) => state.session)
+  if (!isAreaReady(area)) {
+    return (
+      <EmptyState title="Esta sección aún no está disponible">
+        Todavía no está habilitada en esta versión de ColdGuard.
+      </EmptyState>
+    )
+  }
   if (!session || !canAccess(session.roles, area)) {
     return (
       <EmptyState title="No tienes acceso a esta sección">

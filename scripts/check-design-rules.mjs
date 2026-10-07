@@ -28,7 +28,18 @@ const COLORS = [
     `${t}-fg`,
   ]),
 ]
-const TEXT_ROLES = ['caption', 'small', 'body', 'heading-3', 'heading-2', 'heading-1', 'metric']
+const TEXT_ROLES = [
+  'caption',
+  'small',
+  'body',
+  'code',
+  'heading-4',
+  'heading-3',
+  'heading-2',
+  'heading-1',
+  'display',
+  'metric',
+]
 const REQUIRED_TOKENS = [
   ...COLORS.map((c) => `--color-${c}`),
   '--font-sans',
@@ -76,8 +87,8 @@ const RULES = [
   },
   {
     id: 'removed-scale',
-    re: /(?<![\w-])(?:[a-z-]+:)*(?:text-(?:xs|sm|base|lg|xl|[2-9]xl)|rounded(?=[\s"'`])|rounded-(?:xs|xl|2xl|3xl)|shadow-(?:2xs|xs|sm|md|lg|xl|2xl)|font-serif)(?![\w-])/,
-    msg: 'Escala eliminada: usa los roles text-*, rounded-sm|md|lg|full y shadow-raised|overlay',
+    re: /(?<![\w-])(?:[a-z-]+:)*(?:text-(?:xs|sm|base|lg|xl|[2-9]xl)|rounded(?=[\s"'`])|rounded-(?:xs|xl|2xl|3xl)|shadow-(?:2xs|xs|sm|md|lg|xl|2xl)|font-serif|font-(?:thin|extralight|light|medium|bold|extrabold|black))(?![\w-])/,
+    msg: 'Escala eliminada: usa los roles text-*, font-normal|semibold, rounded-sm|md|lg|full y shadow-raised|overlay',
   },
   {
     id: 'inline-style',
@@ -100,7 +111,7 @@ const fail = (file, line, msg) =>
 for (const file of walk(ROOT)) {
   const rel = relative('.', file)
   const isCss = file.endsWith('.css')
-  const isCode = /\.(ts|tsx)$/.test(file) && !/\.test\.|\.d\.ts$|^src\/(mocks|test)\//.test(rel)
+  const isCode = /\.(ts|tsx)$/.test(file) && !/\.test\.|\.d\.ts$|^src\/test\//.test(rel)
 
   if (isCss) {
     if (!ALLOWED_CSS.has(rel))

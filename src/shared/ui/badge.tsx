@@ -3,18 +3,30 @@ import { cn } from '@/shared/lib/cn'
 
 const TONES = {
   neutral: 'bg-neutral-subtle text-neutral-fg',
-  info: 'bg-accent-subtle text-accent-subtle-fg',
+  accent: 'bg-accent-subtle text-accent-subtle-fg',
+  info: 'bg-info-subtle text-info-fg',
+  success: 'bg-success-subtle text-success-fg',
   warning: 'bg-warning-subtle text-warning-fg',
   danger: 'bg-danger-subtle text-danger-fg',
 } as const
 
 export type Tone = keyof typeof TONES
 
-export function Badge({ tone = 'neutral', children }: { tone?: Tone; children: ReactNode }) {
+interface BadgeProps {
+  tone?: Tone
+  dot?: boolean
+  children: ReactNode
+}
+
+export function Badge({ tone = 'neutral', dot, children }: BadgeProps) {
   return (
     <span
-      className={cn('inline-block rounded-sm px-2 py-0.5 text-caption font-medium', TONES[tone])}
+      className={cn(
+        'inline-flex h-5 items-center gap-1.5 rounded-sm px-1.5 text-caption font-semibold whitespace-nowrap',
+        TONES[tone],
+      )}
     >
+      {dot && <span aria-hidden="true" className="size-1.5 rounded-full bg-current" />}
       {children}
     </span>
   )

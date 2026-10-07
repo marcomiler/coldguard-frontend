@@ -8,10 +8,10 @@ Roles del backend (`x-roles` del contrato). Cada rol define la **tarea principal
 
 | Rol | Tarea principal | Áreas | Estado |
 |---|---|---|---|
-| `OPERATOR` | Vigilar incidentes | Incidentes (lectura) | Tablero con datos simulados |
+| `OPERATOR` | Vigilar incidentes | Incidentes (lectura) | Sin pantallas hasta SPEC-007 |
 | `MAINTENANCE_TECHNICIAN` | Atender y cerrar incidentes | Incidentes (lectura y cierre) | Cierre: forma legada, no integrar aún |
-| `OPERATIONS_SUPERVISOR` | Supervisar y reconocer/escalar; ver métricas | Incidentes, métricas, activos y sensores (lectura) | Tablero y métricas simulados; activos real |
-| `PLATFORM_ADMIN` | Configurar la plataforma | Usuarios, organizaciones y sedes, activos, sensores, historial | Backend real; solo lista de activos construida |
+| `OPERATIONS_SUPERVISOR` | Supervisar y reconocer/escalar; ver métricas | Incidentes, métricas, activos y sensores (lectura) | Activos real; incidentes y métricas ocultos hasta SPEC-007 |
+| `PLATFORM_ADMIN` | Configurar la plataforma | Usuarios, organizaciones y sedes, activos, sensores, historial | Usuarios y lista de activos construidos |
 | `AUDITOR` | Revisar la bitácora | Bitácora de auditoría | *Planificado* (sin pantalla aún) |
 
 ## Mapa de navegación

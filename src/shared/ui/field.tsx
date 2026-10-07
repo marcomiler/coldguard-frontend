@@ -1,38 +1,101 @@
 import * as Label from '@radix-ui/react-label'
-import { useId, type InputHTMLAttributes, type Ref } from 'react'
+import { useId, type InputHTMLAttributes, type Ref, type TextareaHTMLAttributes } from 'react'
 import { cn } from '@/shared/lib/cn'
 
-interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
+export const controlSizes = { md: 'min-h-8', lg: 'min-h-10' } as const
+
+export const controlClasses =
+  'w-full rounded-md border border-border-strong bg-bg px-2.5 text-small text-fg transition-colors duration-(--duration-fast) ease-ui placeholder:text-fg-muted hover:border-fg-muted disabled:cursor-not-allowed disabled:opacity-45 aria-[invalid]:border-danger'
+
+interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label: string
+  size?: keyof typeof controlSizes
   error?: string
+  hint?: string
   ref?: Ref<HTMLInputElement>
 }
 
-export function Field({ label, error, className, id, ref, ...props }: FieldProps) {
+export function Field({
+  label,
+  error,
+  hint,
+  size = 'md',
+  className,
+  id,
+  ref,
+  ...props
+}: FieldProps) {
   const generated = useId()
   const inputId = id ?? generated
   const errorId = `${inputId}-error`
+  const hintId = `${inputId}-hint`
+  const describedBy = [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ')
   return (
     <div className="flex flex-col gap-1.5">
-      <Label.Root htmlFor={inputId} className="text-small font-medium">
+      <Label.Root htmlFor={inputId} className="text-caption font-semibold text-fg-muted">
         {label}
       </Label.Root>
       <input
         id={inputId}
         ref={ref}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
-        className={cn(
-          'min-h-10 rounded-md border border-border-strong bg-surface px-3 text-small text-fg aria-[invalid]:border-danger',
-          className,
-        )}
+        aria-describedby={describedBy || undefined}
+        className={cn(controlClasses, controlSizes[size], className)}
         {...props}
       />
+      {hint && !error && (
+        <p id={hintId} className="text-caption text-fg-muted">
+          {hint}
+        </p>
+      )}
       {error && (
-        <p id={errorId} className="text-small text-danger-fg">
+        <p id={errorId} className="text-caption text-danger-fg">
           {error}
         </p>
       )}
     </div>
+  )
+}
+
+interface TextareaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  label: string
+  error?: string
+}
+
+export function TextareaField({ label, error, className, id, ...props }: TextareaFieldProps) {
+  const generated = useId()
+  const fieldId = id ?? generated
+  const errorId = `${fieldId}-error`
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label.Root htmlFor={fieldId} className="text-caption font-semibold text-fg-muted">
+        {label}
+      </Label.Root>
+      <textarea
+        id={fieldId}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
+        className={cn(controlClasses, 'min-h-20 py-2', className)}
+        {...props}
+      />
+      {error && (
+        <p id={errorId} className="text-caption text-danger-fg">
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
+
+export function CheckboxField({
+  label,
+  className,
+  ...props
+}: Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & { label: string }) {
+  return (
+    <label className={cn('flex min-h-8 items-center gap-2 text-small', className)}>
+      <input type="checkbox" className="size-4 accent-accent" {...props} />
+      {label}
+    </label>
   )
 }

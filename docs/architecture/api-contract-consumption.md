@@ -31,18 +31,17 @@ Cada petición tiene un plazo propio (`TIMEOUTS_MS` en `shared/api/client.ts`), 
 - Los plazos deben revisarse si el backend cambia sus deadlines.
 - Si una operación concreta necesita otro plazo, se pasa una `signal` propia en la llamada (p. ej. `AbortSignal.timeout(n)`); el plazo por defecto sigue aplicando como tope adicional.
 
-## Operaciones `planned` y mocks
+## Operaciones `planned`: sin mocks
 
-Las operaciones con `x-status: planned` se construyen contra mocks MSW (`src/mocks/handlers.ts`), solo en desarrollo y solo para esas operaciones; lo `implemented` va siempre al backend real. `VITE_MOCKS=off` desactiva los mocks. Las pantallas que dependen de mocks muestran un aviso de «datos simulados».
+La web **no muestra datos simulados**: todo va al Gateway real. Una área cuyo backend sigue `x-status: planned` se oculta por completo (menú, aterrizaje y ruta) con `ready: false` en `AREAS` (`src/shared/lib/roles.ts`); quien llegue por URL ve «Esta sección aún no está disponible». Cuando el contrato la marque `implemented` y el Gateway la sirva, se pasa `ready` a `true` y se regeneran los tipos.
 
-| Pantalla                                                | Operaciones                                                                   | Estado hoy                                                 |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| Login                                                   | `POST /auth/login`                                                            | real                                                       |
-| Activos (lista)                                         | `GET /assets`                                                                 | real                                                       |
-| Incidentes (tablero)                                    | `GET /incidents`, `GET /metrics/incidents`                                    | planned (SPEC-007), mock                                   |
-| Lecturas, conectividad, inyección de lecturas de prueba | `/sensors/{id}/readings`, `/sensors/connectivity`, `/telemetry/test-readings` | real desde SPEC-006 (sin pantalla aún; nunca se mockearon) |
-
-Para integrar una operación que pasa a `implemented`: borrar su handler en `src/mocks/handlers.ts`, poner `INCIDENTS_BACKEND_READY = true` (si aplica) y regenerar tipos.
+| Área                   | Operaciones                                                                       | Estado hoy                                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Login                  | `POST /auth/login`                                                                | real                                                                                             |
+| Activos (lista)        | `GET /assets`                                                                     | real                                                                                             |
+| Usuarios (admin)       | `/users`, `/users/{id}/roles`, `/users/{id}/enabled`                              | real                                                                                             |
+| Incidentes y métricas  | `GET /incidents`, `/incidents/{id}`, reconocer, escalar, `GET /metrics/incidents` | planned (SPEC-007): **ocultas**. Comprobado contra el Gateway en ejecución: no expone esas rutas |
+| Lecturas, conectividad | `/sensors/{id}/readings`, `/sensors/connectivity`                                 | real desde SPEC-006 (sin pantalla aún)                                                           |
 
 No integrar `POST /incidents` ni `POST /incidents/{id}/close`: su forma es legada y la reemplaza SPEC-007.
 

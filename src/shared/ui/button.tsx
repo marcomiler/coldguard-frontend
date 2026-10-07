@@ -4,30 +4,65 @@ import type { ButtonHTMLAttributes } from 'react'
 import { cn } from '@/shared/lib/cn'
 
 const button = cva(
-  'inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-4 text-small font-medium transition-colors  disabled:cursor-not-allowed disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 rounded-md border font-semibold whitespace-nowrap no-underline transition-colors duration-(--duration-fast) ease-ui active:translate-y-px disabled:cursor-not-allowed disabled:opacity-45',
   {
     variants: {
       variant: {
-        primary: 'bg-accent text-accent-fg hover:bg-accent-hover',
-        secondary: 'border border-border-strong bg-surface text-fg hover:bg-surface-hover',
-        ghost: 'text-fg-muted hover:bg-surface-hover',
+        primary: 'border-transparent bg-accent text-accent-fg hover:bg-accent-hover',
+        secondary: 'border-border-strong bg-surface text-fg hover:bg-surface-hover',
+        ghost: 'border-transparent text-fg-muted hover:bg-surface-hover hover:text-fg',
+        danger: 'border-danger bg-danger-subtle text-danger-fg hover:bg-danger hover:text-bg',
+      },
+      size: {
+        sm: 'min-h-7 px-2.5 text-small',
+        md: 'min-h-8 px-3 text-small',
+        lg: 'min-h-10 px-4 text-body',
+        icon: 'size-8 text-small',
       },
     },
-    defaultVariants: { variant: 'primary' },
+    defaultVariants: { variant: 'primary', size: 'md' },
   },
 )
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof button> {
   asChild?: boolean
+  loading?: boolean
 }
 
-export function Button({ className, variant, asChild, type = 'button', ...props }: ButtonProps) {
-  const Comp = asChild ? Slot : 'button'
+export function Button({
+  className,
+  variant,
+  size,
+  asChild,
+  loading,
+  disabled,
+  children,
+  type = 'button',
+  ...props
+}: ButtonProps) {
+  const classes = cn(button({ variant, size }), className)
+  if (asChild) {
+    return (
+      <Slot className={classes} {...props}>
+        {children}
+      </Slot>
+    )
+  }
   return (
-    <Comp
-      className={cn(button({ variant }), className)}
-      type={asChild ? undefined : type}
+    <button
+      className={classes}
+      type={type}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...props}
-    />
+    >
+      {loading && (
+        <span
+          aria-hidden="true"
+          className="size-3.5 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
+        />
+      )}
+      {children}
+    </button>
   )
 }

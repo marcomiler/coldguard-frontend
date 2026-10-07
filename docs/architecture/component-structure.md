@@ -6,13 +6,13 @@ Complementa [design-system.md](../ux/design-system.md) (tokens, CSS, UX) y [fron
 
 Cada nivel solo importa de los de abajo. Nunca hacia arriba ni lateralmente entre features.
 
-| Nivel | Ubicación | Qué es | Conoce el dominio | Ejemplos |
-|---|---|---|---|---|
-| 1. Primitivos | `src/shared/ui/` | Piezas mínimas con una responsabilidad; estilos solo con tokens | **No** | `Button`, `Field`, `Badge`, `Notice`, `LoadingState`, `EmptyState`, `ErrorState` |
-| 2. Patrones | `src/shared/patterns/` | Composición de primitivos para un problema recurrente | **No** | `PageHeader`, `DataTable`, `Pagination`, `ConfirmDialog`, `FormSection` |
-| 3. Componentes de feature | `src/features/<área>/components/` | Piezas con vocabulario del dominio | Sí | `IncidentStatusBadge`, `PriorityCard`, `AssetCriticalityBadge` |
-| 4. Páginas | `src/features/<área>/pages/` | Una ruta: orquesta datos (hooks) y compone | Sí | `IncidentsPage`, `AssetsPage` |
-| 5. Layout/app | `src/app/` | Shell, router, guards | — | `AppShell` |
+| Nivel                     | Ubicación                         | Qué es                                                          | Conoce el dominio | Ejemplos                                                                         |
+| ------------------------- | --------------------------------- | --------------------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------- |
+| 1. Primitivos             | `src/shared/ui/`                  | Piezas mínimas con una responsabilidad; estilos solo con tokens | **No**            | `Button`, `Field`, `Badge`, `Notice`, `LoadingState`, `EmptyState`, `ErrorState` |
+| 2. Patrones               | `src/shared/patterns/`            | Composición de primitivos para un problema recurrente           | **No**            | `PageHeader`, `DataTable`, `Pagination`, `ConfirmDialog`, `FormSection`          |
+| 3. Componentes de feature | `src/features/<área>/components/` | Piezas con vocabulario del dominio                              | Sí                | `IncidentStatusBadge`, `PriorityCard`, `AssetCriticalityBadge`                   |
+| 4. Páginas                | `src/features/<área>/pages/`      | Una ruta: orquesta datos (hooks) y compone                      | Sí                | `IncidentsPage`, `AssetsPage`                                                    |
+| 5. Layout/app             | `src/app/`                        | Shell, router, guards                                           | —                 | `AppShell`                                                                       |
 
 Reglas:
 
@@ -23,7 +23,7 @@ Reglas:
 
 ## Contrato de un componente
 
-1. **Props mínimas y tipadas.** Variantes con `cva` y un vocabulario cerrado: `variant` (jerarquía: `primary | secondary | ghost`), `size` (`sm | md`), `tone` (`neutral | info | success | warning | danger`). No se inventa vocabulario por componente.
+1. **Props mínimas y tipadas.** Variantes con `cva` y un vocabulario cerrado: `variant` (jerarquía: `primary | secondary | ghost | danger`), `size` (`sm | md | lg | icon`), `tone` (`neutral | accent | info | success | warning | danger`). No se inventa vocabulario por componente.
 2. **Extiende los atributos nativos** del elemento (`ButtonHTMLAttributes`, etc.) y reenvía `ref` y `className` (React 19: `ref` es una prop).
 3. **Todos los estados**: default, hover, `focus-visible` (global), active, disabled, loading e invalid, cuando apliquen. Estados con variantes de Tailwind y atributos `aria-*`/`data-*`.
 4. **Accesible por construcción:** elemento semántico correcto (`button`, no `div`), nombre accesible obligatorio (por prop o contenido), `aria-*` coherentes. Comportamiento complejo (menús, diálogos, selects, tooltips) con **Radix primitives**; no se reimplementa.
@@ -40,18 +40,18 @@ Reglas:
 
 ## Inventario
 
-| Componente | Nivel | Estado | Radix |
-|---|---|---|---|
-| `Button`, `Field`, `Badge` | 1 | Hecho | `Slot`, `Label` |
-| `Notice`, `LoadingState`, `EmptyState`, `ErrorState` | 1 | Hecho | — |
-| `AppShell` (incluye menú de usuario) | 5 | Hecho | `DropdownMenu` |
-| `Select`, `Checkbox`, `Textarea` | 1 | Cuando un formulario lo requiera | `Select`, `Checkbox` |
-| `Dialog` / `ConfirmDialog` | 1 / 2 | Con la primera acción crítica (reconocer, cerrar) | `Dialog`/`AlertDialog` |
-| `Table` + `Pagination` | 2 | Hoy las dos páginas repiten la tabla y la paginación → extraer al diseñar | — |
-| `PageHeader` | 2 | Hoy repetido en cada página | — |
-| `Toast` | 1 | Con la primera escritura exitosa | `Toast` |
-| `Skeleton` | 1 | Con listas largas | — |
-| `Icon` (SVG inline propios) | 1 | Cuando el diseño los defina, solo los usados | — |
-| `StatusBadge` por dominio (severidad, sensor, conectividad) | 3 | Con el diseño de cada pantalla | — |
+| Componente                                                                                                                                                                  | Nivel | Estado                                            | Radix                  |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------- | ---------------------- |
+| `Button` (variantes primary/secondary/ghost/danger, tamaños sm/md/lg, `loading`), `Field`, `SelectField`, `Badge` (con `dot`), `Panel`, `Table`, `BrandMark`, `ThemeToggle` | 1     | Hecho                                             | `Slot`, `Label`        |
+| `Notice`, `LoadingState`, `EmptyState`, `ErrorState`                                                                                                                        | 1     | Hecho                                             | —                      |
+| `PageHeader`, `Pagination`                                                                                                                                                  | 2     | Hecho (usados por activos e incidentes)           | —                      |
+| `PriorityBadge`, `IncidentStatusBadge`, `CriticalityBadge`                                                                                                                  | 3     | Hecho                                             | —                      |
+| `AppShell` (riel lateral, tema y menú de usuario)                                                                                                                           | 5     | Hecho                                             | `DropdownMenu`         |
+| `Textarea`, `Checkbox`                                                                                                                                                      | 1     | Cuando un formulario lo requiera                  | `Checkbox`             |
+| `Dialog` / `ConfirmDialog`                                                                                                                                                  | 1 / 2 | Con la primera acción crítica (reconocer, cerrar) | `Dialog`/`AlertDialog` |
+| `Toast`                                                                                                                                                                     | 1     | Con la primera escritura exitosa                  | `Toast`                |
+| `Skeleton` (la animación `animate-shimmer` ya existe en los tokens)                                                                                                         | 1     | Con listas largas                                 | —                      |
+| `Icon` (SVG inline propios)                                                                                                                                                 | 1     | Cuando el diseño los defina, solo los usados      | —                      |
+| `StatusBadge` por dominio (severidad, sensor, conectividad)                                                                                                                 | 3     | Con el diseño de cada pantalla                    | —                      |
 
 Antes de añadir un componente se verifica que no exista ya uno equivalente en el inventario.

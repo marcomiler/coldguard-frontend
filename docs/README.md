@@ -22,7 +22,7 @@
 - ✅ [component-structure.md](architecture/component-structure.md) — niveles y contrato de componentes.
 - ✅ [routing.md](architecture/routing.md)
 - ✅ [state-management.md](architecture/state-management.md)
-- ✅ [api-contract-consumption.md](architecture/api-contract-consumption.md) — contrato, timeouts, reintentos y mocks.
+- ✅ [api-contract-consumption.md](architecture/api-contract-consumption.md) — contrato, timeouts, reintentos y disponibilidad por área.
 
 ## /quality — Cómo verificamos
 - ✅ [performance-budget.md](quality/performance-budget.md) — presupuesto de peso verificado en cada build.

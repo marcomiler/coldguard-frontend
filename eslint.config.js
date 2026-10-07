@@ -22,7 +22,7 @@ export default tseslint.config(
   },
   { files: ['scripts/**'], languageOptions: { globals: globals.node } },
   {
-    files: ['src/shared/api/**', 'src/mocks/**', 'src/**/*.test.{ts,tsx}'],
+    files: ['src/shared/api/**', 'src/**/*.test.{ts,tsx}'],
     rules: { 'no-restricted-globals': 'off' },
   },
 )

@@ -1,5 +1,5 @@
 // Budgets in gzip kB.
-import { readdirSync, readFileSync, existsSync } from 'node:fs'
+import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
@@ -7,6 +7,7 @@ const BUDGET_KB = {
   initialJs: 115,
   initialCss: 8,
   lazyChunk: 30,
+  fonts: 30,
 }
 
 const dist = 'dist'
@@ -33,15 +34,13 @@ for (const name of readdirSync(assets).filter((f) => /\.(js|css)$/.test(f))) {
     failures.push(`chunk ${name}: ${kb.toFixed(1)} kB > ${BUDGET_KB.lazyChunk} kB`)
   }
 
-  if (
-    name.endsWith('.js') &&
-    /setupWorker|mockServiceWorker/.test(readFileSync(join(assets, name), 'utf8'))
-  ) {
-    failures.push(`${name} contiene código de mocks (MSW)`)
-  }
 }
-if (existsSync(join(dist, 'mockServiceWorker.js')))
-  failures.push('dist/mockServiceWorker.js no debe publicarse')
+
+const fontsKb = readdirSync(assets)
+  .filter((f) => f.endsWith('.woff2'))
+  .reduce((total, f) => total + statSync(join(assets, f)).size / 1024, 0)
+if (fontsKb > BUDGET_KB.fonts)
+  failures.push(`Fuentes: ${fontsKb.toFixed(1)} kB > ${BUDGET_KB.fonts} kB`)
 
 if (initialJs > BUDGET_KB.initialJs)
   failures.push(`JS inicial: ${initialJs.toFixed(1)} kB > ${BUDGET_KB.initialJs} kB`)
@@ -50,7 +49,7 @@ if (initialCss > BUDGET_KB.initialCss)
 
 console.log(report.sort().join('\n'))
 console.log(
-  `\nInicial: JS ${initialJs.toFixed(1)}/${BUDGET_KB.initialJs} kB, CSS ${initialCss.toFixed(1)}/${BUDGET_KB.initialCss} kB (gzip)`,
+  `\nInicial: JS ${initialJs.toFixed(1)}/${BUDGET_KB.initialJs} kB, CSS ${initialCss.toFixed(1)}/${BUDGET_KB.initialCss} kB (gzip), fuentes ${fontsKb.toFixed(1)}/${BUDGET_KB.fonts} kB (woff2)`,
 )
 if (failures.length) {
   console.error(`\nPresupuesto excedido:\n- ${failures.join('\n- ')}`)

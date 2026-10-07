@@ -18,7 +18,7 @@ Se aplica a **cada pantalla** antes de darla por terminada (también resume lo q
 - [ ] Un `h1` por vista, niveles sin saltos; landmarks y «Saltar al contenido»; `document.title` por ruta.
 - [ ] Todo control con nombre accesible; formularios con label visible y errores asociados (`aria-describedby`).
 - [ ] Contraste ≥ 4.5:1 (texto) y ≥ 3:1 (UI) en tema claro **y** oscuro.
-- [ ] Objetivos ≥ 24 px (recomendado 40 px).
+- [ ] Objetivos ≥ 24 px (control estándar 32 px, formularios 40 px).
 - [ ] Cambios dinámicos anunciados (`role="status"` / `alert`); sin información solo por color.
 - [ ] Reflow a 320 px sin scroll horizontal de página; zoom 200 %.
 - [ ] `prefers-reduced-motion` respetado.

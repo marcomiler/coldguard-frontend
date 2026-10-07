@@ -9,6 +9,8 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   server: { port: 5173, strictPort: true },
+  // Keeps light-dark() native so the theme can be forced from the UI.
+  build: { cssTarget: ['chrome123', 'safari17.5', 'firefox120'] },
   test: {
     environment: 'jsdom',
     globals: true,

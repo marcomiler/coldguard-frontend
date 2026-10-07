@@ -34,6 +34,17 @@ export const router = createBrowserRouter([
               },
             ],
           },
+          {
+            element: <RequireArea area="users" />,
+            children: [
+              {
+                path: 'users',
+                lazy: async () => ({
+                  Component: (await import('@/features/users/pages/UsersPage')).UsersPage,
+                }),
+              },
+            ],
+          },
           { path: '*', element: <p>Página no encontrada.</p> },
         ],
       },

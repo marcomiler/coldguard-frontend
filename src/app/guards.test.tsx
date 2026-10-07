@@ -26,6 +26,27 @@ function renderAt(path: string) {
 }
 
 describe('guards', () => {
+  it('explains that an area without backend is not available yet, even for its roles', async () => {
+    useSession.getState().signIn(jwt(['OPERATOR']), 3600)
+    const router = createMemoryRouter(
+      [
+        {
+          element: <RequireAuth />,
+          children: [
+            {
+              element: <RequireArea area="incidents" />,
+              children: [{ path: 'incidents', element: <p>lista de incidentes</p> }],
+            },
+          ],
+        },
+      ],
+      { initialEntries: ['/incidents'] },
+    )
+    render(<RouterProvider router={router} />)
+    expect(await screen.findByText('Esta sección aún no está disponible')).toBeInTheDocument()
+    expect(screen.queryByText('lista de incidentes')).not.toBeInTheDocument()
+  })
+
   afterEach(() => useSession.getState().signOut())
 
   it('sin sesión lleva al login', async () => {

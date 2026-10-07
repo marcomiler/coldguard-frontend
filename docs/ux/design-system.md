@@ -9,12 +9,12 @@ Fuente de verdad de **cómo** se construye la interfaz de ColdGuard. No fija la 
 
 ## 1. Qué puede y qué no puede cambiar quien diseña
 
-| Puede (Claude Design o una persona) | No puede sin actualizar antes este documento y el chequeo |
-|---|---|
-| Cambiar **valores** de tokens (colores, escala tipográfica, radios, sombras, familias) | Renombrar o borrar tokens, o saltarse las capas |
-| Añadir tokens nuevos **semánticos** en `tokens.css` y registrarlos en el chequeo | Poner colores, tamaños o sombras fuera de `tokens.css` |
-| Rediseñar la composición de una página respetando §6 y §7 | Bajar los umbrales de accesibilidad (§8) |
-| Proponer una webfont **si cabe** en el presupuesto (§9) | Añadir librerías de UI, de íconos, de animación o CSS-in-JS |
+| Puede (Claude Design o una persona)                                                    | No puede sin actualizar antes este documento y el chequeo   |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Cambiar **valores** de tokens (colores, escala tipográfica, radios, sombras, familias) | Renombrar o borrar tokens, o saltarse las capas             |
+| Añadir tokens nuevos **semánticos** en `tokens.css` y registrarlos en el chequeo       | Poner colores, tamaños o sombras fuera de `tokens.css`      |
+| Rediseñar la composición de una página respetando §6 y §7                              | Bajar los umbrales de accesibilidad (§8)                    |
+| Proponer una webfont **si cabe** en el presupuesto (§9)                                | Añadir librerías de UI, de íconos, de animación o CSS-in-JS |
 
 ## 2. Principios de producto
 
@@ -30,18 +30,18 @@ ColdGuard monitorea cadena de frío: la mayoría del tiempo todo está bien y, d
 
 Tailwind v4 en modo CSS-first. Cuatro capas, de abajo hacia arriba; cada una solo depende de las anteriores:
 
-| Capa | Dónde | Contenido | Quién la toca |
-|---|---|---|---|
-| 1. Primitivos | `tokens.css` → `:root { --palette-* }` | Escalas crudas de color. **No generan utilidades**: ningún componente puede usarlas | Diseño |
-| 2. Semánticos | `tokens.css` → `@theme { --color-*, --text-*, --radius-*, --shadow-*, --font-* }` | Roles con significado. **Son la API de estilos** (`bg-surface`, `text-fg`, `text-heading-2`) | Diseño |
-| 3. Base | `base.css` (`@layer base`) | Estilos de elementos HTML, foco visible global, `prefers-reduced-motion` | Arquitectura |
-| 4. Componentes | `shared/ui` y `features/*` (TSX) | Utilidades de Tailwind compuestas con `cva`. Sin CSS propio | Desarrollo |
+| Capa           | Dónde                                                                             | Contenido                                                                                    | Quién la toca |
+| -------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------- |
+| 1. Primitivos  | `tokens.css` → `:root { --palette-* }`                                            | Escalas crudas de color. **No generan utilidades**: ningún componente puede usarlas          | Diseño        |
+| 2. Semánticos  | `tokens.css` → `@theme { --color-*, --text-*, --radius-*, --shadow-*, --font-* }` | Roles con significado. **Son la API de estilos** (`bg-surface`, `text-fg`, `text-heading-2`) | Diseño        |
+| 3. Base        | `base.css` (`@layer base`)                                                        | Estilos de elementos HTML, foco visible global, `prefers-reduced-motion`                     | Arquitectura  |
+| 4. Componentes | `shared/ui` y `features/*` (TSX)                                                  | Utilidades de Tailwind compuestas con `cva`. Sin CSS propio                                  | Desarrollo    |
 
 Decisiones estructurales:
 
 - **No hay archivos CSS de componentes.** Solo `tokens.css`, `base.css` e `index.css` (que los importa). Un componente se estiliza únicamente con utilidades.
 - **Las escalas por defecto de Tailwind están eliminadas** (`--color-*: initial`, etc.). `bg-slate-500`, `rounded`, `text-xl` o `shadow-lg` no existen: el sistema solo ofrece lo definido en `tokens.css`.
-- **El tema claro/oscuro vive en los tokens**, con `light-dark()` y `color-scheme: light dark` (sigue al sistema). Los componentes **nunca** usan `dark:`. Cambiar o añadir un tema es tocar `tokens.css`.
+- **El tema claro/oscuro vive en los tokens**, con `light-dark()`. El tema por defecto es **oscuro** (dirección «Sala de Control») y el usuario puede cambiarlo con `ThemeToggle`: `shared/lib/theme.ts` guarda la elección y la aplica en `<html data-theme>`; un script mínimo en `index.html` la aplica antes del primer pintado. El build fija `cssTarget` (Chrome 123, Safari 17.5, Firefox 120) para que `light-dark()` siga siendo nativo. Los componentes **nunca** usan `dark:`.
 - **Sin componentes de tokens** (p. ej. `--button-bg`): los componentes consumen los semánticos. Si un caso no encaja, se añade un semántico nuevo, no uno por componente.
 - **Un solo nivel de abstracción para variantes:** `cva` en el componente (`variant`, `size`, `tone`), nunca clases condicionales dispersas por las páginas.
 
@@ -53,7 +53,7 @@ Obligatorias (las marcadas ⚙ las verifica el chequeo automático):
 2. ⚙ Sin valores arbitrarios (`w-[13px]`, `text-[#333]`). Excepciones: variantes de estado (`data-[…]`, `aria-[…]`, `group-[…]`, `has-[…]`). Si falta un valor, se agrega un token.
 3. ⚙ Sin `dark:` en componentes (§3).
 4. ⚙ Sin `style={}` en JSX. Para un valor dinámico, una variable CSS (`style` solo con `--var`) justificada con `design-allow: <motivo>`.
-5. ⚙ Tipografía solo con roles: `text-caption | small | body | heading-3 | heading-2 | heading-1 | metric`. Pesos: `font-medium` y `font-semibold`.
+5. ⚙ Tipografía solo con roles: `text-caption | small | body | code | heading-4 | heading-3 | heading-2 | heading-1 | display | metric`. Pesos: solo `font-normal` y `font-semibold` (son los dos que se cargan). Cifras, ids y marcas de tiempo con `font-mono` (+ `tabular-nums`).
 6. ⚙ Radios `rounded-sm|md|lg|full`; sombras `shadow-raised|overlay`.
 7. ⚙ `@apply` y `!important` solo en `base.css`.
 8. **Mobile-first**: la clase base es el móvil; `sm: md: lg:` solo agregan. Breakpoints por defecto de Tailwind, sin personalizar.
@@ -70,17 +70,19 @@ Excepción puntual: comentar la línea con `design-allow: <motivo>`; el motivo s
 
 Estos nombres son la API; los valores son libres dentro de las restricciones. `tokens.css` los declara todos y el chequeo falla si falta alguno.
 
-| Familia | Tokens | Restricciones de valor |
-|---|---|---|
-| Superficies | `bg`, `surface`, `surface-raised`, `surface-hover`, `overlay` | `surface` y `bg` distinguibles; `overlay` deja ver el fondo |
-| Texto | `fg`, `fg-muted` | `fg` ≥ 7:1 sobre `surface`; `fg-muted` ≥ 4.5:1 |
-| Bordes | `border`, `border-strong` | `border-strong` (el de inputs) ≥ 3:1 contra el fondo |
-| Acento | `accent`, `accent-hover`, `accent-fg`, `accent-subtle`, `accent-subtle-fg`, `focus` | `accent-fg` sobre `accent` ≥ 4.5:1; `focus` ≥ 3:1 contra cualquier superficie |
-| Tonos de estado | `neutral`, `info`, `success`, `warning`, `danger` × (`` , `-subtle`, `-fg`) | sólido = borde/ícono; `-fg` sobre `-subtle` ≥ 4.5:1 |
-| Fuentes | `font-sans`, `font-mono` | Máx. 2 familias (§9) |
-| Roles de texto | `caption`, `small`, `body`, `heading-3`, `heading-2`, `heading-1`, `metric` (+ `--line-height`) | Cuerpo ≥ 16 px; `small` ≥ 14 px; `caption` ≥ 12 px |
-| Forma | `radius-sm/md/lg/full`, `shadow-raised/overlay` | Máx. 3 niveles de elevación (plano, raised, overlay) |
-| Otros | `focus-ring-width/offset`, `target-min`, `z-sticky/overlay/toast`, `duration-fast/base` | `target-min` ≥ 24 px (WCAG 2.2), recomendado 40 px; foco ≥ 2 px |
+| Familia         | Tokens                                                                                                                                                      | Restricciones de valor                                                                                          |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Superficies     | `bg`, `surface`, `surface-raised`, `surface-hover`, `overlay`                                                                                               | `surface` y `bg` distinguibles; `overlay` deja ver el fondo                                                     |
+| Texto           | `fg`, `fg-muted`                                                                                                                                            | `fg` ≥ 7:1 sobre `surface`; `fg-muted` ≥ 4.5:1                                                                  |
+| Bordes          | `border`, `border-strong`                                                                                                                                   | `border-strong` (el de inputs) ≥ 3:1 contra el fondo                                                            |
+| Acento          | `accent`, `accent-hover`, `accent-fg`, `accent-subtle`, `accent-subtle-fg`, `focus`                                                                         | `accent-fg` sobre `accent` ≥ 4.5:1; `focus` ≥ 3:1 contra cualquier superficie                                   |
+| Tonos de estado | `neutral`, `info`, `success`, `warning`, `danger` × (`` , `-subtle`, `-fg`)                                                                                 | sólido = borde/ícono; `-fg` sobre `-subtle` ≥ 4.5:1                                                             |
+| Fuentes         | `font-sans`, `font-mono`                                                                                                                                    | Máx. 2 familias (§9) y ≤ 30 kB en total                                                                         |
+| Roles de texto  | `caption`, `small`, `body`, `code`, `heading-4`, `heading-3`, `heading-2`, `heading-1`, `display`, `metric` (+ `--line-height`; algunos `--letter-spacing`) | `body` ≥ 14 px; `small` ≥ 13 px; `caption` y `code` ≥ 12 px (ver nota)                                          |
+| Forma           | `radius-sm/md/lg/full`, `shadow-raised/overlay`                                                                                                             | Máx. 3 niveles de elevación (plano, raised, overlay)                                                            |
+| Otros           | `focus-ring-width/offset`, `target-min`, `z-sticky/overlay/toast`, `duration-fast/base/slow`, `ease-ui`                                                     | `target-min` ≥ 24 px (WCAG 2.2); el control estándar es de 32 px y 40 px en formularios de entrada; foco ≥ 2 px |
+
+Nota sobre tamaños: la dirección «Sala de Control» es una interfaz de datos densa, por eso el cuerpo es de 14 px (antes 16). WCAG 2.2 no fija un tamaño mínimo de texto; la compensación es soportar zoom al 200 % y reflow a 320 px, y no bajar nunca de 12 px.
 
 Cada token de color debe definirse **para los dos temas** (con `light-dark()`). Los tonos de severidad de incidente se resuelven reutilizando los de estado; si el diseño necesita un matiz propio (p. ej. P2 naranja distinto del ámbar de advertencia), se añaden tokens `sev-p1…p4` siguiendo el mismo patrón sólido/subtle/fg.
 
@@ -109,14 +111,15 @@ Reglas de jerarquía:
 
 **Estados de datos** (regla del proyecto): toda vista que carga datos resuelve `loading`, `empty`, `error` y `success`.
 
-| Estado | Patrón |
-|---|---|
+| Estado  | Patrón                                                                                                                                                              |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Loading | `LoadingState` (`role="status"`); en listas largas, esqueleto con la forma del contenido tras ~300 ms; nunca un spinner a pantalla completa si hay contenido previo |
-| Empty | `EmptyState`: dice **por qué** está vacío y qué hacer (con acción si existe) |
-| Error | `ErrorState` (`role="alert"`): mensaje por `code`, `correlationId` visible, **Reintentar** |
-| Success | Escrituras: confirmación inline o toast no bloqueante (`aria-live="polite"`); nunca solo por color |
+| Empty   | `EmptyState`: dice **por qué** está vacío y qué hacer (con acción si existe)                                                                                        |
+| Error   | `ErrorState` (`role="alert"`): mensaje por `code`, `correlationId` visible, **Reintentar**                                                                          |
+| Success | Escrituras: confirmación inline o toast no bloqueante (`aria-live="polite"`); nunca solo por color                                                                  |
 
 **Formularios**
+
 - Label siempre visible (no placeholder como label); texto de ayuda antes del campo, error después, asociado con `aria-describedby`.
 - Validar al enviar y al salir del campo; con ≥ 3 errores, resumen arriba con enlaces a cada campo. Foco al primer error.
 - Marcar lo opcional, no lo obligatorio, si casi todo es obligatorio.
@@ -130,6 +133,7 @@ Reglas de jerarquía:
 **Timeouts de escritura:** `WRITE_TIMEOUT` → no se sabe si se aplicó; se pide revisar el estado antes de repetir.
 
 **Tiempo y severidad (dominio operativo):**
+
 - La severidad nunca depende solo del color: siempre texto o ícono con nombre accesible.
 - Plazos (`ackDueAt`, `resolveDueAt`): relativo («vence en 4 min») **y** absoluto accesible (`<time datetime>` + `title`/tooltip). Vencido se marca como estado, no solo como color.
 - Instantes del backend (UTC) se muestran en la zona horaria del usuario; formato `Intl` en español.
@@ -143,7 +147,7 @@ Reglas de jerarquía:
 
 - Contraste: texto 4.5:1, texto grande y componentes de UI 3:1 (los umbrales de §5 lo garantizan).
 - Todo es operable con teclado; orden lógico; **foco siempre visible** y no oculto por elementos fijos; sin trampas de foco (los diálogos de Radix gestionan foco y `Esc`).
-- Objetivos táctiles/clic ≥ 24 px (recomendado 40 px, `--target-min`).
+- Objetivos táctiles/clic ≥ 24 px (WCAG 2.2); el control estándar mide 32 px (`--target-min`) y las acciones principales de formularios, 40 px.
 - Landmarks (`header`, `nav` con `aria-label`, `main#main`), enlace «Saltar al contenido», `lang="es"`.
 - Nombres accesibles para todo control; íconos decorativos `aria-hidden`, informativos con texto.
 - Cambios dinámicos anunciados: `role="status"`/`aria-live="polite"`; errores `role="alert"`.
@@ -157,7 +161,7 @@ Comprobación por pantalla: [usability-checklist.md](../quality/usability-checkl
 
 Presupuesto y control en [performance-budget.md](../quality/performance-budget.md). Implicaciones para diseño:
 
-- **Fuentes:** por defecto, pila del sistema (0 kB). Si se propone una webfont: **una** familia variable, `woff2`, subconjunto latino, `font-display: swap`, **autoalojada** (sin CDN de fuentes), con precarga solo de la del texto base, y debe caber en el presupuesto (≤ 30 kB). Mono solo para ids y valores técnicos, con la pila del sistema.
+- **Fuentes:** IBM Plex Sans (400, 600) e IBM Plex Mono (500), `woff2` autoalojadas en `src/assets/fonts`, `font-display: swap`, **23 kB** en total frente a un límite de 30 kB (lo verifica `pnpm build`). Cada archivo es un subconjunto: ASCII, español (á é í ó ú ü ñ ¿ ¡), comillas, rayas y símbolos de datos (° − × ± ≤ ≥), **sin hinting**, que reduce el peso a la mitad. Un carácter fuera del subconjunto cae a la fuente del sistema. Para regenerar o ampliar: `pyftsubset <fuente.woff2> --unicodes=… --flavor=woff2 --no-hinting --layout-features='kern,tnum,lnum,case'`.
 - **Íconos:** SVG inline en componentes propios, solo los usados; sin librerías de íconos. Todo ícono con `aria-hidden` o nombre.
 - **Imágenes:** ninguna salvo SVG. Sin imágenes de fondo decorativas.
 - **Efectos costosos fuera:** `backdrop-filter`, sombras múltiples grandes, degradados animados.
@@ -169,6 +173,7 @@ Presupuesto y control en [performance-budget.md](../quality/performance-budget.m
 Un cambio de diseño se hace en este orden: **1)** tokens → **2)** componente base (`shared/ui`) → **3)** patrón compuesto → **4)** pantalla. Si la pantalla necesita algo que un nivel inferior no ofrece, se amplía ese nivel; no se parcha en la pantalla.
 
 Una pantalla o componente está terminado cuando:
+
 - [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test` y `pnpm build` pasan (incluye reglas de diseño y presupuesto).
 - [ ] Resuelve loading, empty, error y success.
 - [ ] Se usa solo con teclado y se ve bien en 320 px, 768 px y 1280 px, en tema claro y oscuro.

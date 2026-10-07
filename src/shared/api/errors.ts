@@ -53,6 +53,9 @@ export class ApiError extends Error {
   }
 }
 
+export const fieldError = (error: unknown, field: string): string | undefined =>
+  isApiError(error) ? error.fieldErrors.find((item) => item.field === field)?.message : undefined
+
 export const isApiError = (error: unknown): error is ApiError => error instanceof ApiError
 
 const MESSAGES: Record<string, string> = {
@@ -62,6 +65,10 @@ const MESSAGES: Record<string, string> = {
     'La operación tardó demasiado y no sabemos si se aplicó. Revisa el estado antes de repetirla.',
   INVALID_CREDENTIALS:
     'Usuario o contraseña incorrectos, o la cuenta está bloqueada o deshabilitada.',
+  USER_ALREADY_EXISTS: 'Ya existe un usuario con ese nombre de usuario o correo.',
+  USER_STATE_CONFLICT:
+    'No se puede completar: debe quedar al menos un administrador habilitado con el rol de administrador.',
+  USER_NOT_FOUND: 'El usuario ya no existe.',
   INVALID_REQUEST: 'Hay datos que no son válidos. Revisa los campos marcados.',
   CONCURRENT_MODIFICATION: 'Alguien más modificó este registro. Recarga y vuelve a intentarlo.',
   CALIBRATION_EVIDENCE_REQUIRED:
