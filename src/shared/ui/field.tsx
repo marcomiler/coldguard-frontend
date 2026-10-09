@@ -1,17 +1,24 @@
 import * as Label from '@radix-ui/react-label'
-import { useId, type InputHTMLAttributes, type Ref, type TextareaHTMLAttributes } from 'react'
+import {
+  useId,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type Ref,
+  type TextareaHTMLAttributes,
+} from 'react'
 import { cn } from '@/shared/lib/cn'
 
 export const controlSizes = { md: 'min-h-8', lg: 'min-h-10' } as const
 
 export const controlClasses =
-  'w-full rounded-md border border-border-strong bg-bg px-2.5 text-small text-fg transition-colors duration-(--duration-fast) ease-ui placeholder:text-fg-muted hover:border-fg-muted disabled:cursor-not-allowed disabled:opacity-45 aria-[invalid]:border-danger'
+  'w-full cursor-pointer rounded-md border border-border-strong bg-bg px-2.5 text-small text-fg transition-colors duration-(--duration-fast) ease-ui placeholder:text-fg-muted hover:border-fg-muted disabled:cursor-not-allowed disabled:opacity-45 aria-[invalid]:border-danger'
 
 interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label: string
   size?: keyof typeof controlSizes
   error?: string
   hint?: string
+  trailing?: ReactNode
   ref?: Ref<HTMLInputElement>
 }
 
@@ -19,12 +26,13 @@ export function Field({
   label,
   error,
   hint,
+  trailing,
   size = 'md',
   className,
   id,
   ref,
   ...props
-}: FieldProps) {
+}: Readonly<FieldProps>) {
   const generated = useId()
   const inputId = id ?? generated
   const errorId = `${inputId}-error`
@@ -35,14 +43,17 @@ export function Field({
       <Label.Root htmlFor={inputId} className="text-caption font-semibold text-fg-muted">
         {label}
       </Label.Root>
-      <input
-        id={inputId}
-        ref={ref}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy || undefined}
-        className={cn(controlClasses, controlSizes[size], className)}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          id={inputId}
+          ref={ref}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy || undefined}
+          className={cn(controlClasses, controlSizes[size], trailing && 'pr-10', className)}
+          {...props}
+        />
+        {trailing && <div className="absolute inset-y-0 right-0 flex items-center">{trailing}</div>}
+      </div>
       {hint && !error && (
         <p id={hintId} className="text-caption text-fg-muted">
           {hint}
@@ -62,7 +73,13 @@ interface TextareaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement>
   error?: string
 }
 
-export function TextareaField({ label, error, className, id, ...props }: TextareaFieldProps) {
+export function TextareaField({
+  label,
+  error,
+  className,
+  id,
+  ...props
+}: Readonly<TextareaFieldProps>) {
   const generated = useId()
   const fieldId = id ?? generated
   const errorId = `${fieldId}-error`

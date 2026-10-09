@@ -12,3 +12,5 @@ coverage
 # El gitignore global ignora estos; aquí sí se versionan (CI usa --frozen-lockfile)
 !pnpm-lock.yaml
 !.env.example
+
+.visual-check

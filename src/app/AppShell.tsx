@@ -1,26 +1,28 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router'
 import { useSession } from '@/features/auth/session'
 import { cn } from '@/shared/lib/cn'
 import { canAccess, ROLE_LABELS, type Area } from '@/shared/lib/roles'
-import { BrandMark } from '@/shared/ui/brand-mark'
+import { FormDialog } from '@/shared/patterns/form-dialog'
 import { Avatar } from '@/shared/ui/avatar'
+import { BrandMark } from '@/shared/ui/brand-mark'
+import { Button } from '@/shared/ui/button'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
 
 const NAV: { to: string; label: string; area: Area }[] = [
   { to: '/incidents', label: 'Incidentes', area: 'incidents' },
   { to: '/assets', label: 'Activos', area: 'assets' },
+  { to: '/organizations', label: 'Organizaciones', area: 'organizations' },
+  { to: '/sensors', label: 'Sensores', area: 'sensors' },
   { to: '/users', label: 'Usuarios', area: 'users' },
+  { to: '/audit', label: 'Bitácora', area: 'audit' },
 ]
 
 export function AppShell() {
   const session = useSession((state) => state.session)
   const signOut = useSession((state) => state.signOut)
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false)
   if (!session) return null
-  const allRoles = session.roles.map((role) => ROLE_LABELS[role]).join(', ')
-  const firstRole = session.roles[0] ? ROLE_LABELS[session.roles[0]] : 'Sin rol'
-  const roleSummary =
-    session.roles.length > 1 ? `${firstRole} +${session.roles.length - 1}` : firstRole
 
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
@@ -30,7 +32,7 @@ export function AppShell() {
       >
         Saltar al contenido
       </a>
-      <aside className="flex flex-col gap-3 border-b border-border bg-surface p-3 md:w-54 md:shrink-0 md:gap-5 md:border-r md:border-b-0">
+      <aside className="flex flex-col gap-3 border-b border-border bg-surface p-3 md:sticky md:top-0 md:h-dvh md:w-54 md:shrink-0 md:gap-5 md:self-start md:overflow-y-auto md:border-r md:border-b-0">
         <div className="flex items-center gap-2 px-2.5 py-1">
           <BrandMark />
           <span className="text-heading-3 font-semibold">ColdGuard</span>
@@ -53,46 +55,41 @@ export function AppShell() {
             </NavLink>
           ))}
         </nav>
-        <div className="flex items-center gap-1 border-t border-border pt-3 md:mt-auto">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <button
-                type="button"
-                title={allRoles}
-                className="flex min-w-0 flex-1 items-center gap-2.5 rounded-md p-1.5 text-left transition-colors duration-(--duration-fast) ease-ui hover:bg-surface-hover"
-              >
-                <Avatar name={session.username} />
-                <span className="min-w-0">
-                  <span className="block truncate text-small font-semibold">
-                    {session.username}
-                  </span>
-                  <span className="block truncate text-caption text-fg-muted">{roleSummary}</span>
-                </span>
-              </button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                align="end"
-                className="min-w-56 rounded-md border border-border bg-surface-raised p-1 shadow-overlay"
-              >
-                <DropdownMenu.Label className="px-3 py-2 text-caption text-fg-muted">
-                  {allRoles}
-                </DropdownMenu.Label>
-                <DropdownMenu.Item
-                  onSelect={signOut}
-                  className="cursor-pointer rounded-sm px-3 py-2 text-small outline-none data-[highlighted]:bg-surface-hover"
-                >
-                  Salir
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
-          <ThemeToggle />
-        </div>
+        <section
+          aria-label="Sesión"
+          className="flex flex-col gap-3 rounded-lg border border-border bg-bg p-3 md:mt-auto"
+        >
+          <div className="flex items-center gap-2.5">
+            <Avatar name={session.username} />
+            <div className="min-w-0">
+              <p className="truncate text-small font-semibold">{session.username}</p>
+              <p className="text-caption leading-snug text-fg-muted">
+                {session.roles.map((role) => ROLE_LABELS[role]).join(' · ')}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between gap-2 border-t border-border pt-2.5">
+            <ThemeToggle />
+            <Button variant="secondary" size="sm" onClick={() => setConfirmingSignOut(true)}>
+              Salir
+            </Button>
+          </div>
+        </section>
       </aside>
       <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-4 py-5 md:px-7 md:pb-10">
         <Outlet />
       </main>
+      <FormDialog
+        open={confirmingSignOut}
+        onOpenChange={setConfirmingSignOut}
+        title="Cerrar sesión"
+        description="Saldrás de ColdGuard y tendrás que iniciar sesión de nuevo para continuar."
+        submitLabel="Cerrar sesión"
+        pending={false}
+        onSubmit={signOut}
+      >
+        {null}
+      </FormDialog>
     </div>
   )
 }

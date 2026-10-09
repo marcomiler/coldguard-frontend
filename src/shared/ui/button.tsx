@@ -4,7 +4,7 @@ import type { ButtonHTMLAttributes } from 'react'
 import { cn } from '@/shared/lib/cn'
 
 const button = cva(
-  'inline-flex items-center justify-center gap-2 rounded-md border font-semibold whitespace-nowrap no-underline transition-colors duration-(--duration-fast) ease-ui active:translate-y-px disabled:cursor-not-allowed disabled:opacity-45',
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border font-semibold whitespace-nowrap no-underline transition-colors duration-(--duration-fast) ease-ui active:translate-y-px disabled:cursor-not-allowed disabled:opacity-45',
   {
     variants: {
       variant: {
@@ -39,7 +39,7 @@ export function Button({
   children,
   type = 'button',
   ...props
-}: ButtonProps) {
+}: Readonly<ButtonProps>) {
   const classes = cn(button({ variant, size }), className)
   if (asChild) {
     return (

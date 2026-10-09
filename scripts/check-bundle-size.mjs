@@ -33,7 +33,6 @@ for (const name of readdirSync(assets).filter((f) => /\.(js|css)$/.test(f))) {
   else if (name.endsWith('.js') && kb > BUDGET_KB.lazyChunk) {
     failures.push(`chunk ${name}: ${kb.toFixed(1)} kB > ${BUDGET_KB.lazyChunk} kB`)
   }
-
 }
 
 const fontsKb = readdirSync(assets)

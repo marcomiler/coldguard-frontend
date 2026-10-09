@@ -29,4 +29,26 @@ describe('useSession', () => {
     useSession.getState().signOut()
     expect(useSession.getState()).toMatchObject({ session: null, ended: false })
   })
+
+  it('guarda la sesión para sobrevivir a una recarga y la borra al salir', () => {
+    const token = jwt({ sub: 'u1', preferred_username: 'op', roles: ['OPERATOR'] })
+    useSession.getState().signIn(token, 3600)
+    expect(JSON.parse(sessionStorage.getItem('cg-session') ?? '{}')).toMatchObject({ token })
+    useSession.getState().signOut()
+    expect(sessionStorage.getItem('cg-session')).toBeNull()
+  })
+
+  it('no restaura una sesión vencida', async () => {
+    const token = jwt({ sub: 'u1', preferred_username: 'op', roles: ['OPERATOR'] })
+    sessionStorage.setItem('cg-session', JSON.stringify({ token, expiresAt: Date.now() - 1 }))
+    vi.resetModules()
+    const fresh = await import('./session')
+    expect(fresh.useSession.getState().session).toBeNull()
+
+    sessionStorage.setItem('cg-session', JSON.stringify({ token, expiresAt: Date.now() + 60_000 }))
+    vi.resetModules()
+    const again = await import('./session')
+    expect(again.useSession.getState().session?.username).toBe('op')
+    again.useSession.getState().signOut()
+  })
 })

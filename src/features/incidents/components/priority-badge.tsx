@@ -9,7 +9,13 @@ const STYLES: Record<Priority, string> = {
 }
 
 /** Renders the priority as text; `pulse` marks an unacknowledged P1. */
-export function PriorityBadge({ priority, pulse }: { priority: Priority; pulse?: boolean }) {
+export function PriorityBadge({
+  priority,
+  pulse,
+}: {
+  readonly priority: Priority
+  readonly pulse?: boolean
+}) {
   return (
     <span
       className={cn(

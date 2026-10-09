@@ -18,7 +18,7 @@ El estado y la trazabilidad de cada una están en [screen-inventory.md](../produ
 
 No se inventan enlaces: se agregan cuando existan.
 
-| Artefacto | Pantallas | Enlace |
-|---|---|---|
-| Wireframes | — | Pendiente |
-| Mockups de alta fidelidad / salida de Claude Design | — | Pendiente |
+| Artefacto                                           | Pantallas | Enlace    |
+| --------------------------------------------------- | --------- | --------- |
+| Wireframes                                          | —         | Pendiente |
+| Mockups de alta fidelidad / salida de Claude Design | —         | Pendiente |

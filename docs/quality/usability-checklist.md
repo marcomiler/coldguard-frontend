@@ -22,7 +22,7 @@ Se aplica a **cada pantalla** antes de darla por terminada (también resume lo q
 - [ ] Cambios dinámicos anunciados (`role="status"` / `alert`); sin información solo por color.
 - [ ] Reflow a 320 px sin scroll horizontal de página; zoom 200 %.
 - [ ] `prefers-reduced-motion` respetado.
-- [ ] Probado con lector de pantalla *(anotar herramienta y fecha cuando se haga)*.
+- [ ] Probado con lector de pantalla _(anotar herramienta y fecha cuando se haga)_.
 
 ## Rendimiento
 

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type SubmitEvent } from 'react'
 import { fieldError } from '@/shared/api/errors'
 import type { User } from '@/shared/api/types'
 import { Button } from '@/shared/ui/button'
@@ -8,24 +8,29 @@ import { ErrorState } from '@/shared/ui/states'
 import { useSetUserEnabled } from '../api/users'
 
 interface EnabledDialogProps {
-  user: User | null
-  onClose: () => void
-  onDone: (message: string) => void
+  readonly user: User | null
+  readonly onClose: () => void
+  readonly onDone: (message: string) => void
 }
 
 export function EnabledDialog({ user, onClose, onDone }: EnabledDialogProps) {
   const setEnabled = useSetUserEnabled()
   const [reasonError, setReasonError] = useState<string>()
   const enable = user ? !user.enabled : false
+  const action = enable ? 'Habilitar' : 'Deshabilitar'
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  function onSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!user) return
-    const reason = String(new FormData(event.currentTarget).get('reason') ?? '').trim()
+
+    const reasonValue = new FormData(event.currentTarget).get('reason')
+    const reason = typeof reasonValue === 'string' ? reasonValue.trim() : ''
+
     if (!reason) {
       setReasonError('Indica el motivo del cambio')
       return
     }
+
     setReasonError(undefined)
     setEnabled.mutate(
       { userId: user.userId, enabled: enable, reason },
@@ -49,7 +54,7 @@ export function EnabledDialog({ user, onClose, onDone }: EnabledDialogProps) {
     <Dialog
       open={user !== null}
       onOpenChange={close}
-      title={user ? `${enable ? 'Habilitar' : 'Deshabilitar'} a ${user.username}` : 'Estado'}
+      title={user ? `${action} a ${user.username}` : 'Estado'}
       description={
         enable
           ? 'Podrá volver a ingresar a ColdGuard.'

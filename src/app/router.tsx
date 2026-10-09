@@ -21,6 +21,13 @@ export const router = createBrowserRouter([
                     .IncidentsPage,
                 }),
               },
+              {
+                path: 'incidents/:incidentId',
+                lazy: async () => ({
+                  Component: (await import('@/features/incidents/pages/IncidentDetailPage'))
+                    .IncidentDetailPage,
+                }),
+              },
             ],
           },
           {
@@ -35,12 +42,46 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            element: <RequireArea area="organizations" />,
+            children: [
+              {
+                path: 'organizations',
+                lazy: async () => ({
+                  Component: (await import('@/features/organizations/pages/OrganizationsPage'))
+                    .OrganizationsPage,
+                }),
+              },
+            ],
+          },
+          {
+            element: <RequireArea area="sensors" />,
+            children: [
+              {
+                path: 'sensors',
+                lazy: async () => ({
+                  Component: (await import('@/features/sensors/pages/SensorsPage')).SensorsPage,
+                }),
+              },
+            ],
+          },
+          {
             element: <RequireArea area="users" />,
             children: [
               {
                 path: 'users',
                 lazy: async () => ({
                   Component: (await import('@/features/users/pages/UsersPage')).UsersPage,
+                }),
+              },
+            ],
+          },
+          {
+            element: <RequireArea area="audit" />,
+            children: [
+              {
+                path: 'audit',
+                lazy: async () => ({
+                  Component: (await import('@/features/audit/pages/AuditPage')).AuditPage,
                 }),
               },
             ],

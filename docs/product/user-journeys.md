@@ -3,6 +3,7 @@
 Estado: sin definir. No existía contenido previo sobre journeys en `/docs`.
 
 ## TODO
+
 - [ ] Journey de autenticación (login → dashboard).
 - [ ] Journey de gestión de incidentes (detección → registro → resolución).
 - [ ] Journey de gestión de activos (registro de unidad → consulta → seguimiento).

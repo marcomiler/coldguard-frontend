@@ -3,7 +3,7 @@
 | Tipo de estado                                     | Dónde vive                     | Herramienta                          |
 | -------------------------------------------------- | ------------------------------ | ------------------------------------ |
 | Datos del servidor (activos, incidentes, métricas) | Caché por query key            | TanStack Query                       |
-| Sesión (token, usuario, roles)                     | Solo memoria                   | Zustand (`features/auth/session.ts`) |
+| Sesión (token, usuario, roles)                     | `sessionStorage`               | Zustand (`features/auth/session.ts`) |
 | Formularios                                        | Local al formulario            | React Hook Form + Zod                |
 | Filtros y paginación                               | Local a la página (`useState`) | —                                    |
 

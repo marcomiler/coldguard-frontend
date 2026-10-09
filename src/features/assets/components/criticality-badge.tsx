@@ -12,3 +12,7 @@ export function CriticalityBadge({ criticality }: { criticality: Criticality }) 
   const { label, tone } = CRITICALITY[criticality]
   return <Badge tone={tone}>{label}</Badge>
 }
+
+export const CRITICALITY_OPTIONS = (Object.keys(CRITICALITY) as Criticality[]).map(
+  (value) => [value, CRITICALITY[value].label] as const,
+)

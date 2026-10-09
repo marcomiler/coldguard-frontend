@@ -20,7 +20,7 @@ export default tseslint.config(
       ],
     },
   },
-  { files: ['scripts/**'], languageOptions: { globals: globals.node } },
+  { files: ['scripts/**'], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
   {
     files: ['src/shared/api/**', 'src/**/*.test.{ts,tsx}'],
     rules: { 'no-restricted-globals': 'off' },

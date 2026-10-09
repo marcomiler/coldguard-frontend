@@ -13,9 +13,9 @@ const TONES = {
 export type Tone = keyof typeof TONES
 
 interface BadgeProps {
-  tone?: Tone
-  dot?: boolean
-  children: ReactNode
+  readonly tone?: Tone
+  readonly dot?: boolean
+  readonly children: ReactNode
 }
 
 export function Badge({ tone = 'neutral', dot, children }: BadgeProps) {

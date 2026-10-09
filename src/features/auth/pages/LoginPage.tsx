@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type SyntheticEvent } from 'react'
 import { Navigate, useLocation } from 'react-router'
 import { resolveLanding } from '@/shared/lib/roles'
 import { BrandMark } from '@/shared/ui/brand-mark'
 import { Button } from '@/shared/ui/button'
 import { Field } from '@/shared/ui/field'
+import { PasswordField } from '@/shared/ui/password-field'
 import { ErrorState, Notice } from '@/shared/ui/states'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
 import { useLogin } from '../api/login'
@@ -18,11 +19,16 @@ export function LoginPage() {
   const login = useLogin()
   const [errors, setErrors] = useState<Errors>({})
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  function onSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    const username = String(data.get('username') ?? '').trim()
-    const password = String(data.get('password') ?? '')
+
+    const usernameValue = data.get('username')
+    const username = typeof usernameValue === 'string' ? usernameValue.trim() : ''
+
+    const passwordValue = data.get('password')
+    const password = typeof passwordValue === 'string' ? passwordValue : ''
+
     const next: Errors = {
       username: username ? undefined : 'Ingresa tu usuario',
       password: password ? undefined : 'Ingresa tu contraseña',
@@ -73,10 +79,9 @@ export function LoginPage() {
               size="lg"
               error={errors.username}
             />
-            <Field
+            <PasswordField
               label="Contraseña"
               name="password"
-              type="password"
               autoComplete="current-password"
               size="lg"
               error={errors.password}

@@ -1,9 +1,15 @@
 import type { HTMLAttributes, ReactNode, TdHTMLAttributes, ThHTMLAttributes } from 'react'
 import { cn } from '@/shared/lib/cn'
 
-export function Table({ caption, children }: { caption: string; children: ReactNode }) {
+export function Table({
+  caption,
+  children,
+}: {
+  readonly caption: string
+  readonly children: ReactNode
+}) {
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
       <table className="w-full text-left text-small">
         <caption className="sr-only">{caption}</caption>
         {children}
@@ -12,7 +18,7 @@ export function Table({ caption, children }: { caption: string; children: ReactN
   )
 }
 
-export function Th({ className, ...props }: ThHTMLAttributes<HTMLTableCellElement>) {
+export function Th({ className, ...props }: Readonly<ThHTMLAttributes<HTMLTableCellElement>>) {
   return (
     <th
       scope="col"
@@ -25,7 +31,7 @@ export function Th({ className, ...props }: ThHTMLAttributes<HTMLTableCellElemen
   )
 }
 
-export function Tr({ className, ...props }: HTMLAttributes<HTMLTableRowElement>) {
+export function Tr({ className, ...props }: Readonly<HTMLAttributes<HTMLTableRowElement>>) {
   return (
     <tr
       className={cn(
@@ -37,6 +43,6 @@ export function Tr({ className, ...props }: HTMLAttributes<HTMLTableRowElement>)
   )
 }
 
-export function Td({ className, ...props }: TdHTMLAttributes<HTMLTableCellElement>) {
+export function Td({ className, ...props }: Readonly<TdHTMLAttributes<HTMLTableCellElement>>) {
   return <td className={cn('h-9 border-b border-border px-3.5', className)} {...props} />
 }

@@ -1,10 +1,10 @@
 import { Button } from '@/shared/ui/button'
 
 interface PaginationProps {
-  page: number
-  totalPages: number
-  onPrevious: () => void
-  onNext: () => void
+  readonly page: number
+  readonly totalPages: number
+  readonly onPrevious: () => void
+  readonly onNext: () => void
 }
 
 export function Pagination({ page, totalPages, onPrevious, onNext }: PaginationProps) {

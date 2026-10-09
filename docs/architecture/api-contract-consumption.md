@@ -11,11 +11,11 @@ Fuente de verdad: `../coldguard-platform/contracts/rest/openapi.yaml` y `../cold
 ## Convenciones del contrato que el cliente respeta
 
 - Base URL: `VITE_API_BASE_URL` (Gateway, `http://localhost:8080/api/v1`). El Gateway es el único punto de entrada.
-- Auth: `Authorization: Bearer`, token de 1 h en memoria, sin refresh. Un `401` fuera del login termina la sesión y vuelve al login.
+- Auth: `Authorization: Bearer`, token de 1 h en `sessionStorage` (sobrevive a recargas, no a cerrar la pestaña), sin refresh. Un `401` fuera del login termina la sesión y vuelve al login.
 - Errores: Problem Details. Se decide por `code` (`ApiError.code`), nunca por `detail`; `correlationId` se muestra para soporte. Mensajes propios en `shared/api/errors.ts`.
 - Cada petición envía `X-Correlation-Id`.
 - Timeouts: ver la sección siguiente.
-- Roles: `x-roles` del contrato vive reflejado en `shared/lib/roles.ts` (`AREA_ROLES`). La UI solo oculta; la autoridad es el backend.
+- Roles: `x-roles` del contrato vive reflejado en `shared/lib/roles.ts` (`AREAS`). La UI solo oculta; la autoridad es el backend.
 
 ## Timeouts y reintentos
 
@@ -33,18 +33,29 @@ Cada petición tiene un plazo propio (`TIMEOUTS_MS` en `shared/api/client.ts`), 
 
 ## Operaciones `planned`: sin mocks
 
-La web **no muestra datos simulados**: todo va al Gateway real. Una área cuyo backend sigue `x-status: planned` se oculta por completo (menú, aterrizaje y ruta) con `ready: false` en `AREAS` (`src/shared/lib/roles.ts`); quien llegue por URL ve «Esta sección aún no está disponible». Cuando el contrato la marque `implemented` y el Gateway la sirva, se pasa `ready` a `true` y se regeneran los tipos.
+La web **no muestra datos simulados**: todo va al Gateway real. Hoy todas las áreas tienen backend (`ready: true`). Si una vuelve a quedar `x-status: planned`, se oculta por completo (menú, aterrizaje y ruta) con `ready: false` en `AREAS` (`src/shared/lib/roles.ts`); quien llegue por URL ve «Esta sección aún no está disponible». Cuando el contrato la marque `implemented` y el Gateway la sirva, se pasa `ready` a `true` y se regeneran los tipos.
 
-| Área                   | Operaciones                                                                       | Estado hoy                                                                                       |
-| ---------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Login                  | `POST /auth/login`                                                                | real                                                                                             |
-| Activos (lista)        | `GET /assets`                                                                     | real                                                                                             |
-| Usuarios (admin)       | `/users`, `/users/{id}/roles`, `/users/{id}/enabled`                              | real                                                                                             |
-| Incidentes y métricas  | `GET /incidents`, `/incidents/{id}`, reconocer, escalar, `GET /metrics/incidents` | planned (SPEC-007): **ocultas**. Comprobado contra el Gateway en ejecución: no expone esas rutas |
-| Lecturas, conectividad | `/sensors/{id}/readings`, `/sensors/connectivity`                                 | real desde SPEC-006 (sin pantalla aún)                                                           |
+| Área                         | Operaciones                                                     | Estado hoy                                                                                                            |
+| ---------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Login                        | `POST /auth/login`                                              | real                                                                                                                  |
+| Activos (lista)              | `GET /assets`                                                   | real                                                                                                                  |
+| Usuarios (admin)             | `/users`, `/users/{id}/roles`, `/users/{id}/enabled`            | real                                                                                                                  |
+| Incidentes                   | `GET /incidents`, `/incidents/{id}`, reconocer, escalar, cerrar | real (SPEC-007). El cierre aún responde con la forma **legada**: la web ignora el cuerpo y vuelve a leer el incidente |
+| Métricas                     | `GET /metrics/incidents`                                        | real (supervisor)                                                                                                     |
+| Bitácora                     | `GET /audit-records`                                            | real (auditor), paginación por cursor                                                                                 |
+| Lecturas y perfil del sensor | `GET /sensors/{id}/readings`, `/sensors/{id}/profile`           | real; solo admin y supervisor (operador y técnico reciben 403). Alimentan el gráfico del detalle de incidente         |
+| Conectividad                 | `/sensors/connectivity`                                         | real (sin pantalla aún)                                                                                               |
 
-No integrar `POST /incidents` ni `POST /incidents/{id}/close`: su forma es legada y la reemplaza SPEC-007.
+No integrar `POST /incidents` (creación técnica, forma legada). `POST /incidents/{id}/close` sí se usa, ignorando su respuesta legada.
 
 ## Pendiente
 
 - Paginación por cursor (historial del sensor, lecturas) cuando se construyan esas pantallas.
+
+## Datos en vivo
+
+No hay canal push: las pantallas de incidentes (lista, detalle y métricas) consultan cada 30 s mientras la pestaña está visible (`refetchInterval`). Los plazos (`ackDueAt`, `resolveDueAt`) se muestran relativos y se recalculan cada 30 s en el cliente (`useNow`).
+
+## Nombres de unidad
+
+El incidente trae `assetId`, no el nombre. Los roles que pueden leer activos (supervisor, admin) ven el nombre (`GET /assets`, caché de 5 min); operador y técnico no tienen ese permiso y ven `Unidad` + prefijo del id.

@@ -11,16 +11,16 @@ Estado: definida (v0.1). Verificada contra `package.json`.
 
 ## Stack
 
-| Capa               | Elección                                                  | Motivo                                                 |
-| ------------------ | --------------------------------------------------------- | ------------------------------------------------------ |
-| Build / framework  | React 19 + TypeScript (strict) + Vite                     | SPA con despliegue estático                            |
-| Routing            | React Router (modo librería, `lazy()` por área)           | Guards por rol y división de código                    |
-| Datos del servidor | TanStack Query                                            | loading / error / caché / paginación sin código propio |
-| Cliente API        | `openapi-typescript` + `openapi-fetch`                    | Tipos generados del contrato                           |
-| Estado de UI       | Zustand (solo sesión)                                     | El estado del servidor no se duplica                   |
-| Formularios        | React Hook Form + Zod                                     | La validación del cliente es solo UX                   |
-| UI                 | Tailwind CSS 4 + Radix UI primitives + `cva`              | Accesibilidad (teclado, ARIA) y layouts responsive     |
-| Calidad            | ESLint (+ `jsx-a11y`), Prettier, Vitest + Testing Library |                                                        |
+| Capa               | Elección                                                                                    | Motivo                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Build / framework  | React 19 + TypeScript (strict) + Vite                                                       | SPA con despliegue estático                            |
+| Routing            | React Router (modo librería, `lazy()` por área)                                             | Guards por rol y división de código                    |
+| Datos del servidor | TanStack Query                                                                              | loading / error / caché / paginación sin código propio |
+| Cliente API        | `openapi-typescript` + `openapi-fetch`                                                      | Tipos generados del contrato                           |
+| Estado de UI       | Zustand (solo sesión)                                                                       | El estado del servidor no se duplica                   |
+| Formularios        | React Hook Form + Zod                                                                       | La validación del cliente es solo UX                   |
+| UI                 | Tailwind CSS 4 + Radix UI primitives + `cva`                                                | Accesibilidad (teclado, ARIA) y layouts responsive     |
+| Calidad            | ESLint (+ `jsx-a11y`), Prettier, Vitest + Testing Library, Playwright (`pnpm check:visual`) |                                                        |
 
 Nota: TypeScript está fijado en 5.9 porque `openapi-typescript` aún no es compatible con la API del compilador de TypeScript 7.
 

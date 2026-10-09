@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { User } from '@/shared/api/types'
 import { formatDateTime } from '@/shared/lib/format'
+import { useAutoDismiss } from '@/shared/lib/use-auto-dismiss'
 import { ROLE_LABELS } from '@/shared/lib/roles'
 import { PageHeader } from '@/shared/patterns/page-header'
 import { Pagination } from '@/shared/patterns/pagination'
@@ -20,7 +21,7 @@ export function UsersPage() {
   const [creating, setCreating] = useState(false)
   const [roleUser, setRoleUser] = useState<User | null>(null)
   const [enabledUser, setEnabledUser] = useState<User | null>(null)
-  const [done, setDone] = useState<string | null>(null)
+  const notice = useAutoDismiss()
   const { data, error, isPending, isError, isFetching, refetch } = useUsers(page)
 
   return (
@@ -29,7 +30,11 @@ export function UsersPage() {
         <Button onClick={() => setCreating(true)}>Crear usuario</Button>
       </PageHeader>
 
-      {done && <Alert tone="success">{done}</Alert>}
+      {notice.message && (
+        <Alert tone="success" onDismiss={notice.dismiss}>
+          {notice.message}
+        </Alert>
+      )}
       {isPending && <LoadingState label="Cargando usuarios…" />}
       {isError && <ErrorState error={error} onRetry={() => void refetch()} />}
       {data && data.items.length === 0 && (
@@ -110,10 +115,10 @@ export function UsersPage() {
       <CreateUserDialog
         open={creating}
         onOpenChange={setCreating}
-        onCreated={(username) => setDone(`Usuario creado: ${username}.`)}
+        onCreated={(username) => notice.show(`Usuario creado: ${username}.`)}
       />
-      <RoleDialog user={roleUser} onClose={() => setRoleUser(null)} onDone={setDone} />
-      <EnabledDialog user={enabledUser} onClose={() => setEnabledUser(null)} onDone={setDone} />
+      <RoleDialog user={roleUser} onClose={() => setRoleUser(null)} onDone={notice.show} />
+      <EnabledDialog user={enabledUser} onClose={() => setEnabledUser(null)} onDone={notice.show} />
     </section>
   )
 }

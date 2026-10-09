@@ -2,19 +2,25 @@ import type { ReactNode } from 'react'
 import { errorMessage, isApiError } from '@/shared/api/errors'
 import { Button } from './button'
 
-export function LoadingState({ label = 'Cargando…' }: { label?: string }) {
+export function LoadingState({ label = 'Cargando…' }: { readonly label?: string }) {
   return (
-    <div role="status" className="flex items-center gap-3 p-6 text-fg-muted">
+    <output className="flex items-center gap-3 p-6 text-fg-muted">
       <span
         aria-hidden="true"
         className="size-4 animate-spin rounded-full border-2 border-border-strong border-t-accent motion-reduce:animate-none"
       />
       {label}
-    </div>
+    </output>
   )
 }
 
-export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
+export function EmptyState({
+  title,
+  children,
+}: {
+  readonly title: string
+  readonly children?: ReactNode
+}) {
   return (
     <div className="rounded-md border border-dashed border-border-strong p-8 text-center">
       <p className="text-heading-3 font-semibold">{title}</p>
@@ -23,7 +29,13 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
   )
 }
 
-export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
+export function ErrorState({
+  error,
+  onRetry,
+}: {
+  readonly error: unknown
+  readonly onRetry?: () => void
+}) {
   const correlationId = isApiError(error) ? error.correlationId : undefined
   return (
     <div
@@ -47,7 +59,7 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
   )
 }
 
-export function Notice({ children }: { children: ReactNode }) {
+export function Notice({ children }: { readonly children: ReactNode }) {
   return (
     <p className="rounded-md border border-warning bg-warning-subtle px-3 py-2 text-small text-warning-fg">
       {children}
