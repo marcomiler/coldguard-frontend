@@ -12,5 +12,7 @@ coverage
 # El gitignore global ignora estos; aquí sí se versionan (CI usa --frozen-lockfile)
 !pnpm-lock.yaml
 !.env.example
+# Código fuente, no artefactos de empaquetado: el gitignore global ignora cualquier carpeta lib/
+!src/shared/lib/
 
 .visual-check
